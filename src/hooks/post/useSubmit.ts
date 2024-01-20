@@ -12,7 +12,7 @@ export const useSubmit = () => {
   const createPost = async (formData: FormData) => {
     const body = getJsonFromData(formData);
 
-    await fetch("http://3.36.204.107/post", {
+    await fetch("/api/post", {
       method: "POST",
       body: body,
     });
