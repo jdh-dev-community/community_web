@@ -3,7 +3,9 @@ import { Header } from "@/components/header";
 import { MainCard } from "@/components/card";
 import { useEffect, useRef, useState } from "react";
 import { GetServerSideProps } from "next";
-import { BoardList } from "./api/postList";
+import { Board } from "./api/postList";
+import { SortingButtons } from "@/components/home";
+import { NEWEST } from "@/components/home/SortButton";
 
 const inter = Inter({ subsets: ["latin"] });
 const PAGE_SIZE = 8;
@@ -13,13 +15,15 @@ export default function Home({
   totalElement,
   initPageSize,
 }: {
-  data: BoardList[];
+  data: Board[];
   totalElement: number;
   initPageSize: number;
 }) {
-  const [cards, setCards] = useState<BoardList[]>(data);
+  const firstRender = useRef(true);
+  const [cards, setCards] = useState<Board[]>(data);
   const [isLoading, setLoading] = useState(false);
   const [page, setPage] = useState(initPageSize);
+  const [listSortType, setListSortType] = useState(NEWEST);
 
   const target = useRef<HTMLDivElement>(null);
 
@@ -30,7 +34,7 @@ export default function Home({
     if (isLoading) return;
 
     const response = await fetch(
-      `/api/postList?page=${currentPage}&size=${PAGE_SIZE}`
+      `/api/postList?page=${currentPage}&size=${PAGE_SIZE}&sortBy=${listSortType}`
     );
 
     const newCards = await response.json();
@@ -41,13 +45,21 @@ export default function Home({
   };
 
   useEffect(() => {
-    if (page === 1) return;
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
 
     fetchPostCards(page);
-  }, [page]);
+  }, [page, listSortType]);
 
   const loadMore = () => {
     setPage((prevPage) => prevPage + 1);
+  };
+
+  const handleClickSortType = (type: string) => {
+    setListSortType(type);
+    setPage(1);
   };
 
   useEffect(() => {
@@ -69,10 +81,16 @@ export default function Home({
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
+      style={{ backgroundColor: "#fff" }}
     >
       <Header />
 
       <div className="container mx-auto px-4">
+        <SortingButtons
+          currentType={listSortType}
+          onClickButton={handleClickSortType}
+        />
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {cards?.map((card, index) => (
             <MainCard key={index} {...card} />
@@ -101,7 +119,7 @@ export default function Home({
 
 export const getServerSideProps = (async () => {
   const response = await fetch(
-    `http://3.36.204.107/api/v1/post/?page=1&size=${PAGE_SIZE}`
+    `http://3.36.204.107/api/v1/post/?page=1&size=${PAGE_SIZE}&sortBy=${NEWEST}`
   );
   const data = await response.json();
 
@@ -113,7 +131,7 @@ export const getServerSideProps = (async () => {
     },
   };
 }) satisfies GetServerSideProps<{
-  data: BoardList[];
+  data: Board[];
   totalElement: number;
   initPageSize: number;
 }>;
