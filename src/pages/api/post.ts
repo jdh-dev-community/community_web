@@ -6,15 +6,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  try {
-    const response = await createPost(req.body);
+  const response = await createPost(req.body);
 
-    console.log("response", response);
-    // res.redirect(307, `/post/${id}`);
-  } catch (err) {
-    console.log("err", err);
-
-    throw new Error("Failed to submit the data. Please try again.");
+  if (response.status === 201) {
+    res.status(200).json({ result: await response.json() });
+  } else {
+    res.status(response.status).json({ result: null });
   }
 }
 
