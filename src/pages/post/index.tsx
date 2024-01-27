@@ -10,9 +10,9 @@ export default function PostPage() {
 
       <div>카테고리</div>
       <select name="category" className="text-black">
-        <option value="질문">질문</option>
-        <option value="홍보">홍보</option>
-        <option value="상담">질문</option>
+        <option value="concern">고민</option>
+        <option value="question">질문</option>
+        <option value="daily">일상</option>
       </select>
 
       <div>제목</div>
