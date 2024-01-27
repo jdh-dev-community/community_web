@@ -6,11 +6,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  await fetch("http://3.36.204.107/post", {
+  const response = await fetch("http://3.36.204.107/api/v1/post", {
     method: req.method,
     body: req.body,
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
-  res.status(201).json({});
-  // res.redirect(201, "/");
+  console.log("status", response.status);
+  res.redirect(201, "/");
 }
