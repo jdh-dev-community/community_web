@@ -1,6 +1,9 @@
+import { useRouter } from "next/router";
 import { FormEvent } from "react";
 
 export const useSubmit = () => {
+  const router = useRouter();
+
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -12,10 +15,19 @@ export const useSubmit = () => {
   const createPost = async (formData: FormData) => {
     const body = getJsonFromData(formData);
 
-    await fetch("http://3.36.204.107/post", {
+    const res = await fetch("/api/post", {
       method: "POST",
       body: body,
     });
+
+    const { result } = await res.json();
+
+    if (result !== null) {
+      router.push(`/post/${result.postId}`);
+    } else {
+      // 팝업 UI 변경
+      alert("글 작성 실패");
+    }
   };
 
   // 이미지 추가할 때는 FormData를 사용해야 할 가능성 고려
