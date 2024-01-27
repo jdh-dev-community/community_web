@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-export type BoardList = {
+export type Board = {
   category: string;
   content: string;
   createdAt: null | Date;
@@ -12,7 +12,7 @@ export type BoardList = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<BoardList[]>
+  res: NextApiResponse<Board[]>
 ) {
   const { page, size } = req.query;
 
