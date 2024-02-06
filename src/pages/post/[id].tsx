@@ -1,3 +1,4 @@
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { colors } from "@/styles/theme";
 import { convertDateFormat } from "@/utils/dateUtils";
@@ -11,7 +12,7 @@ export default function PostDetail({
   data: Board & { comments: any[] };
 }) {
   const [comment, setComment] = useState("");
-
+  console.log("data", data);
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -67,6 +68,26 @@ export default function PostDetail({
             </div>
             <p className="text-gray-800">{data.content}</p>
           </div>
+
+          <div className="mt-11 mb-2">댓글</div>
+          {data.comments.map((comment) => {
+            return (
+              <Card className="p-6 mb-1">
+                <div className="flex justify-between">
+                  <span className="text-sm text-gray-500 mb-2">
+                    {comment.creator}
+                  </span>
+                  <span className="text-sm text-gray-500 mb-4">
+                    {comment.createdAt
+                      ? convertDateFormat(comment.createdAt)
+                      : "알 수 없음"}
+                  </span>
+                </div>
+
+                <p className="text-gray-800">{comment.content}</p>
+              </Card>
+            );
+          })}
 
           {/* 댓글 작성 부분 */}
           <div className="mt-10">
