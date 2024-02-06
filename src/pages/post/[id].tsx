@@ -1,17 +1,12 @@
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { colors } from "@/styles/theme";
 import { convertDateFormat } from "@/utils/dateUtils";
 import { GetServerSideProps } from "next";
 
+import { CommentForm } from "@/components/postDetail/CommentForm";
 import { Button } from "@/components/ui/button";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/router";
 import { FormEvent, useRef, useState } from "react";
 import { Board } from "../api/postList";
@@ -37,6 +32,7 @@ export default function PostDetail({
         postId: data.postId,
         content: comment,
         ...requestParams,
+        parentId: commentId.current,
       }),
     }).then(async (res) => {
       const { success } = await res.json();
@@ -90,70 +86,76 @@ export default function PostDetail({
 
           <div className="flex justify-between mt-11 mb-2">
             <div className="self-end">댓글</div>
+
             <Dialog>
               <DialogTrigger asChild>
                 <Button onClick={() => setCommentId(null)}>댓글 작성</Button>
               </DialogTrigger>
-
               <DialogContent>
-                {/* 댓글 작성 부분 */}
-                <div className="p-10">
-                  <form
-                    onSubmit={handleSubmit}
-                    className="flex flex-col space-y-4"
-                  >
-                    <Input
-                      type="text"
-                      name="creator"
-                      placeholder="작성자"
-                      required
-                    />
-                    <Input
-                      type="text"
-                      name="password"
-                      pattern="\S{4,}"
-                      placeholder="비밀번호 (4자 이상 입력해주세요)"
-                      required
-                    />
-
-                    <textarea
-                      className="p-4 h-40 resize-none rounded-md border-2 border-gray-200 focus:outline-none"
-                      placeholder="댓글을 작성하세요..."
-                      value={comment}
-                      onChange={(e) => setComment(e.target.value)}
-                      required
-                    ></textarea>
-                    <DialogFooter>
-                      <Button
-                        type="submit"
-                        className="text-white rounded-md px-6 py-2 transition-colors"
-                        style={{ backgroundColor: colors.primary }}
-                      >
-                        댓글 작성
-                      </Button>
-                    </DialogFooter>
-                  </form>
-                </div>
+                <CommentForm
+                  handleSubmit={handleSubmit}
+                  setComment={setComment}
+                  comment={comment}
+                />
               </DialogContent>
             </Dialog>
           </div>
 
           {/* 댓글 목록 */}
-          {data.comments.map((comment) => {
+          {data.comments.map((content) => {
             return (
-              <Card className="p-6 mb-1">
+              <Card key={content.commentId} className="p-6 mb-1">
                 <div className="flex justify-between">
-                  <span className="text-sm text-gray-500 mb-2">
-                    {comment.creator}
-                  </span>
-                  <span className="text-sm text-gray-500 mb-4">
-                    {comment.createdAt
-                      ? convertDateFormat(comment.createdAt)
+                  <div className="text-sm text-gray-500">{content.creator}</div>
+                  <div className="text-sm text-gray-500 mb-4 text-xs">
+                    {content.createdAt
+                      ? convertDateFormat(content.createdAt)
                       : "알 수 없음"}
-                  </span>
+                  </div>
                 </div>
 
-                <p className="text-gray-800">{comment.content}</p>
+                <p className="text-gray-800">{content.content}</p>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      onClick={() => setCommentId(content.commentId)}
+                      variant="secondary"
+                      size="icon"
+                    >
+                      답글
+                    </Button>
+                  </DialogTrigger>
+
+                  <DialogContent>
+                    <CommentForm
+                      handleSubmit={handleSubmit}
+                      setComment={setComment}
+                      comment={comment}
+                    />
+                  </DialogContent>
+                </Dialog>
+
+                {/* 대댓글 목록 */}
+                {content.children.map((reply: any) => {
+                  return (
+                    <div className="ml-6 my-2">
+                      <Separator className="my-2" />
+                      <div className="flex justify-between">
+                        <div className="text-sm text-gray-500">
+                          {reply.creator}
+                        </div>
+                        <div className="text-sm text-gray-500 mb-4 text-xs">
+                          {reply.createdAt
+                            ? convertDateFormat(reply.createdAt)
+                            : "알 수 없음"}
+                        </div>
+                      </div>
+
+                      <p className="text-gray-800">{reply.content}</p>
+                    </div>
+                  );
+                })}
               </Card>
             );
           })}
