@@ -1,8 +1,9 @@
-import { GetServerSideProps } from "next";
-import { Board } from "../api/postList";
-import { useState } from "react";
+import { Input } from "@/components/ui/input";
 import { colors } from "@/styles/theme";
 import { convertDateFormat } from "@/utils/dateUtils";
+import { GetServerSideProps } from "next";
+import { FormEvent, useState } from "react";
+import { Board } from "../api/postList";
 
 export default function PostDetail({
   data,
@@ -11,10 +12,32 @@ export default function PostDetail({
 }) {
   const [comment, setComment] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(comment); // 댓글 처리 로직
-    setComment("");
+
+    const requestParams = getParamsFromFormData(new FormData(e.currentTarget));
+
+    fetch("/api/comment", {
+      method: "POST",
+      body: JSON.stringify({
+        postId: data.postId,
+        content: comment,
+        ...requestParams,
+      }),
+    }).then(async (res) => {
+      const { success } = await res.json();
+      if (success) setComment("");
+    });
+  };
+
+  const getParamsFromFormData = (formData: FormData) => {
+    let currentParams: { [key: string]: any } = {};
+
+    formData.forEach((value, index) => {
+      currentParams[index] = value;
+    });
+
+    return currentParams;
   };
 
   return (
@@ -48,11 +71,21 @@ export default function PostDetail({
           {/* 댓글 작성 부분 */}
           <div className="mt-10">
             <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+              <Input type="text" name="creator" placeholder="작성자" required />
+              <Input
+                type="text"
+                name="password"
+                pattern="\S{4,}"
+                placeholder="비밀번호 (4자 이상 입력해주세요)"
+                required
+              />
+
               <textarea
                 className="p-4 h-40 resize-none rounded-md border-2 border-gray-200 focus:outline-none"
                 placeholder="댓글을 작성하세요..."
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
+                required
               ></textarea>
               <button
                 type="submit"
