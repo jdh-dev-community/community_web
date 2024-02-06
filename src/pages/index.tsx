@@ -1,11 +1,13 @@
-import { Inter } from "next/font/google";
-import { Header } from "@/components/header";
 import { MainCard } from "@/components/card";
-import { useEffect, useRef, useState } from "react";
-import { GetServerSideProps } from "next";
-import { Board } from "./api/postList";
+import { Header } from "@/components/header";
 import { SortingButtons } from "@/components/home";
 import { NEWEST } from "@/components/home/SortButton";
+import { Button } from "@/components/ui/button";
+import { GetServerSideProps } from "next";
+import { Inter } from "next/font/google";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
+import { Board } from "./api/postList";
 
 const inter = Inter({ subsets: ["latin"] });
 const PAGE_SIZE = 8;
@@ -26,6 +28,8 @@ export default function Home({
   const [listSortType, setListSortType] = useState(NEWEST);
 
   const target = useRef<HTMLDivElement>(null);
+
+  const route = useRouter();
 
   const fetchPostCards = async (currentPage: number) => {
     if (cards?.length === totalElement && currentPage !== 2) return;
@@ -78,6 +82,10 @@ export default function Home({
     return () => observer.disconnect();
   }, [target]);
 
+  const goRoutePost = () => {
+    route.push("/post");
+  };
+
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
@@ -86,10 +94,13 @@ export default function Home({
       <Header />
 
       <div className="container mx-auto px-4">
-        <SortingButtons
-          currentType={listSortType}
-          onClickButton={handleClickSortType}
-        />
+        <div className="flex justify-between">
+          <Button onClick={goRoutePost}>글 작성하기</Button>
+          <SortingButtons
+            currentType={listSortType}
+            onClickButton={handleClickSortType}
+          />
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {cards?.map((card, index) => (
