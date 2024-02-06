@@ -1,20 +1,59 @@
-import { GetServerSideProps } from "next";
-import { Board } from "../api/postList";
-import { useState } from "react";
+import { Card } from "@/components/ui/card";
 import { colors } from "@/styles/theme";
 import { convertDateFormat } from "@/utils/dateUtils";
+import { GetServerSideProps } from "next";
+
+import { CommentForm } from "@/components/postDetail/CommentForm";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
+import { useRouter } from "next/router";
+import { FormEvent, useRef, useState } from "react";
+import { Board } from "../api/postList";
 
 export default function PostDetail({
   data,
 }: {
   data: Board & { comments: any[] };
 }) {
-  const [comment, setComment] = useState("");
+  const router = useRouter();
 
-  const handleSubmit = (e) => {
+  const [comment, setComment] = useState("");
+  const commentId = useRef<Number | null>(null);
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(comment); // 댓글 처리 로직
-    setComment("");
+
+    const requestParams = getParamsFromFormData(new FormData(e.currentTarget));
+
+    fetch("/api/comment", {
+      method: "POST",
+      body: JSON.stringify({
+        postId: data.postId,
+        content: comment,
+        ...requestParams,
+        parentId: commentId.current,
+      }),
+    }).then(async (res) => {
+      const { success } = await res.json();
+      if (success) {
+        router.reload();
+      }
+    });
+  };
+
+  const getParamsFromFormData = (formData: FormData) => {
+    let currentParams: { [key: string]: any } = {};
+
+    formData.forEach((value, index) => {
+      currentParams[index] = value;
+    });
+
+    return currentParams;
+  };
+
+  const setCommentId = (id: Number | null) => {
+    commentId.current = id;
   };
 
   return (
@@ -45,24 +84,81 @@ export default function PostDetail({
             <p className="text-gray-800">{data.content}</p>
           </div>
 
-          {/* 댓글 작성 부분 */}
-          <div className="mt-10">
-            <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-              <textarea
-                className="p-4 h-40 resize-none rounded-md border-2 border-gray-200 focus:outline-none"
-                placeholder="댓글을 작성하세요..."
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-              ></textarea>
-              <button
-                type="submit"
-                className="text-white rounded-md px-6 py-2 transition-colors"
-                style={{ backgroundColor: colors.primary }}
-              >
-                댓글 작성
-              </button>
-            </form>
+          <div className="flex justify-between mt-11 mb-2">
+            <div className="self-end">댓글</div>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button onClick={() => setCommentId(null)}>댓글 작성</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <CommentForm
+                  handleSubmit={handleSubmit}
+                  setComment={setComment}
+                  comment={comment}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
+
+          {/* 댓글 목록 */}
+          {data.comments.map((content) => {
+            return (
+              <Card key={content.commentId} className="p-6 mb-1">
+                <div className="flex justify-between">
+                  <div className="text-sm text-gray-500">{content.creator}</div>
+                  <div className="text-sm text-gray-500 mb-4 text-xs">
+                    {content.createdAt
+                      ? convertDateFormat(content.createdAt)
+                      : "알 수 없음"}
+                  </div>
+                </div>
+
+                <p className="text-gray-800">{content.content}</p>
+
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      onClick={() => setCommentId(content.commentId)}
+                      variant="secondary"
+                      size="icon"
+                    >
+                      답글
+                    </Button>
+                  </DialogTrigger>
+
+                  <DialogContent>
+                    <CommentForm
+                      handleSubmit={handleSubmit}
+                      setComment={setComment}
+                      comment={comment}
+                    />
+                  </DialogContent>
+                </Dialog>
+
+                {/* 대댓글 목록 */}
+                {content.children.map((reply: any) => {
+                  return (
+                    <div className="ml-6 my-2">
+                      <Separator className="my-2" />
+                      <div className="flex justify-between">
+                        <div className="text-sm text-gray-500">
+                          {reply.creator}
+                        </div>
+                        <div className="text-sm text-gray-500 mb-4 text-xs">
+                          {reply.createdAt
+                            ? convertDateFormat(reply.createdAt)
+                            : "알 수 없음"}
+                        </div>
+                      </div>
+
+                      <p className="text-gray-800">{reply.content}</p>
+                    </div>
+                  );
+                })}
+              </Card>
+            );
+          })}
         </div>
       </div>
     </div>
