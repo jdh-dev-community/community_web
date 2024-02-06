@@ -1,12 +1,11 @@
 import { colors } from "@/styles/theme";
-import React from "react";
 
 interface Props {
   currentType: string;
   onClickButton: (type: string) => void;
 }
 
-export const NEWEST = "createdAt";
+export const NEWEST = "recent";
 
 const SortingButtons = ({ currentType, onClickButton }: Props) => {
   return (
