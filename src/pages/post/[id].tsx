@@ -3,7 +3,17 @@ import { Input } from "@/components/ui/input";
 import { colors } from "@/styles/theme";
 import { convertDateFormat } from "@/utils/dateUtils";
 import { GetServerSideProps } from "next";
-import { FormEvent, useState } from "react";
+
+import { Button } from "@/components/ui/button";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useRouter } from "next/router";
+import { FormEvent, useRef, useState } from "react";
 import { Board } from "../api/postList";
 
 export default function PostDetail({
@@ -11,8 +21,11 @@ export default function PostDetail({
 }: {
   data: Board & { comments: any[] };
 }) {
+  const router = useRouter();
+
   const [comment, setComment] = useState("");
-  console.log("data", data);
+  const commentId = useRef<Number | null>(null);
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -27,7 +40,9 @@ export default function PostDetail({
       }),
     }).then(async (res) => {
       const { success } = await res.json();
-      if (success) setComment("");
+      if (success) {
+        router.reload();
+      }
     });
   };
 
@@ -39,6 +54,10 @@ export default function PostDetail({
     });
 
     return currentParams;
+  };
+
+  const setCommentId = (id: Number | null) => {
+    commentId.current = id;
   };
 
   return (
@@ -69,7 +88,57 @@ export default function PostDetail({
             <p className="text-gray-800">{data.content}</p>
           </div>
 
-          <div className="mt-11 mb-2">댓글</div>
+          <div className="flex justify-between mt-11 mb-2">
+            <div className="self-end">댓글</div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button onClick={() => setCommentId(null)}>댓글 작성</Button>
+              </DialogTrigger>
+
+              <DialogContent>
+                {/* 댓글 작성 부분 */}
+                <div className="p-10">
+                  <form
+                    onSubmit={handleSubmit}
+                    className="flex flex-col space-y-4"
+                  >
+                    <Input
+                      type="text"
+                      name="creator"
+                      placeholder="작성자"
+                      required
+                    />
+                    <Input
+                      type="text"
+                      name="password"
+                      pattern="\S{4,}"
+                      placeholder="비밀번호 (4자 이상 입력해주세요)"
+                      required
+                    />
+
+                    <textarea
+                      className="p-4 h-40 resize-none rounded-md border-2 border-gray-200 focus:outline-none"
+                      placeholder="댓글을 작성하세요..."
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      required
+                    ></textarea>
+                    <DialogFooter>
+                      <Button
+                        type="submit"
+                        className="text-white rounded-md px-6 py-2 transition-colors"
+                        style={{ backgroundColor: colors.primary }}
+                      >
+                        댓글 작성
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          {/* 댓글 목록 */}
           {data.comments.map((comment) => {
             return (
               <Card className="p-6 mb-1">
@@ -88,35 +157,6 @@ export default function PostDetail({
               </Card>
             );
           })}
-
-          {/* 댓글 작성 부분 */}
-          <div className="mt-10">
-            <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-              <Input type="text" name="creator" placeholder="작성자" required />
-              <Input
-                type="text"
-                name="password"
-                pattern="\S{4,}"
-                placeholder="비밀번호 (4자 이상 입력해주세요)"
-                required
-              />
-
-              <textarea
-                className="p-4 h-40 resize-none rounded-md border-2 border-gray-200 focus:outline-none"
-                placeholder="댓글을 작성하세요..."
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                required
-              ></textarea>
-              <button
-                type="submit"
-                className="text-white rounded-md px-6 py-2 transition-colors"
-                style={{ backgroundColor: colors.primary }}
-              >
-                댓글 작성
-              </button>
-            </form>
-          </div>
         </div>
       </div>
     </div>
