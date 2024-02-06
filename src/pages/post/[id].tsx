@@ -5,8 +5,15 @@ import { GetServerSideProps } from "next";
 
 import { CommentForm } from "@/components/postDetail/CommentForm";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { usePostManage } from "@/hooks/postDetail/usePostManage";
 import { useRouter } from "next/router";
 import { FormEvent, useRef, useState } from "react";
 import { Board } from "../api/postList";
@@ -17,11 +24,12 @@ export default function PostDetail({
   data: Board & { comments: any[] };
 }) {
   const router = useRouter();
+  const { removePost } = usePostManage();
 
   const [comment, setComment] = useState("");
   const commentId = useRef<Number | null>(null);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleCommentSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const requestParams = getParamsFromFormData(new FormData(e.currentTarget));
@@ -56,6 +64,17 @@ export default function PostDetail({
     commentId.current = id;
   };
 
+  const handleRemove = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const params = getParamsFromFormData(new FormData(e.currentTarget));
+
+    removePost({
+      password: params.password,
+      postId: data.postId,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <div
@@ -70,6 +89,39 @@ export default function PostDetail({
 
         {/* 카드 형식의 컨텐츠 */}
         <div className="max-w-2xl mx-auto p-5">
+          <div className="flex justify-end mb-2">
+            <Button variant="outline">수정</Button>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="ml-2">
+                  삭제
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent>
+                <form onSubmit={handleRemove}>
+                  <Input
+                    placeholder="비밀번호"
+                    name="password"
+                    type="text"
+                    className="mt-6"
+                    required
+                  />
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      variant="destructive"
+                      className="mt-4"
+                    >
+                      삭제
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
+
           <div className="bg-gray-100 p-6 rounded-lg shadow-md">
             <div className="text-sm text-gray-500 mb-2">
               작성자 : {data.creator} | 조회수: {data.viewCount} | 카테고리:{" "}
@@ -93,7 +145,7 @@ export default function PostDetail({
               </DialogTrigger>
               <DialogContent>
                 <CommentForm
-                  handleSubmit={handleSubmit}
+                  handleSubmit={handleCommentSubmit}
                   setComment={setComment}
                   comment={comment}
                 />
@@ -129,7 +181,7 @@ export default function PostDetail({
 
                   <DialogContent>
                     <CommentForm
-                      handleSubmit={handleSubmit}
+                      handleSubmit={handleCommentSubmit}
                       setComment={setComment}
                       comment={comment}
                     />
@@ -139,7 +191,7 @@ export default function PostDetail({
                 {/* 대댓글 목록 */}
                 {content.children.map((reply: any) => {
                   return (
-                    <div className="ml-6 my-2">
+                    <div key={reply.commentId} className="ml-6 my-2">
                       <Separator className="my-2" />
                       <div className="flex justify-between">
                         <div className="text-sm text-gray-500">
