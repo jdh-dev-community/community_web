@@ -22,6 +22,23 @@ export const usePostManage = () => {
     router.replace("/");
   };
 
+  const updatePost = async (params: any) => {
+    const { postId, token, ...body } = params;
+
+    const res = await fetch(`/api/post/${postId}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ ...body, postId }),
+    });
+    const { success } = await res.json();
+
+    if (success) {
+      router.reload();
+    }
+  };
+
   const getToken = async ({
     postId,
     password,
@@ -42,5 +59,5 @@ export const usePostManage = () => {
     return res.token;
   };
 
-  return { removePost };
+  return { removePost, getToken, updatePost };
 };
