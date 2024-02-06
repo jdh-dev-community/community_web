@@ -11,8 +11,18 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import { usePostManage } from "@/hooks/postDetail/usePostManage";
 import { useRouter } from "next/router";
 import { FormEvent, useRef, useState } from "react";
@@ -24,10 +34,14 @@ export default function PostDetail({
   data: Board & { comments: any[] };
 }) {
   const router = useRouter();
-  const { removePost } = usePostManage();
+  const { removePost, getToken, updatePost } = usePostManage();
 
   const [comment, setComment] = useState("");
+  const [openUpdateWindow, setOpenUpdateWindow] = useState(false);
+  const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+
   const commentId = useRef<Number | null>(null);
+  const token = useRef<string | null>(null);
 
   const handleCommentSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -75,6 +89,35 @@ export default function PostDetail({
     });
   };
 
+  const handleUpdate = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const params = getParamsFromFormData(new FormData(e.currentTarget));
+
+    updatePost({
+      ...params,
+      postId: data.postId,
+      token: token.current,
+      creator: data.creator,
+    });
+  };
+
+  const checkUser = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const params = getParamsFromFormData(new FormData(e.currentTarget));
+
+    getToken({
+      password: params.password,
+      postId: data.postId,
+    }).then((value) => {
+      token.current = value;
+
+      setOpenUpdateDialog(false);
+      setOpenUpdateWindow(true);
+    });
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <div
@@ -90,7 +133,34 @@ export default function PostDetail({
         {/* 카드 형식의 컨텐츠 */}
         <div className="max-w-2xl mx-auto p-5">
           <div className="flex justify-end mb-2">
-            <Button variant="outline">수정</Button>
+            <Dialog open={openUpdateDialog} onOpenChange={setOpenUpdateDialog}>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="ml-2">
+                  수정
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent>
+                <form onSubmit={checkUser}>
+                  <Input
+                    placeholder="비밀번호"
+                    name="password"
+                    type="text"
+                    className="mt-6"
+                    required
+                  />
+                  <DialogFooter>
+                    <Button
+                      type="submit"
+                      variant="destructive"
+                      className="mt-4"
+                    >
+                      확인
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
 
             <Dialog>
               <DialogTrigger asChild>
@@ -114,7 +184,7 @@ export default function PostDetail({
                       variant="destructive"
                       className="mt-4"
                     >
-                      삭제
+                      확인
                     </Button>
                   </DialogFooter>
                 </form>
@@ -211,6 +281,43 @@ export default function PostDetail({
               </Card>
             );
           })}
+
+          <Drawer open={openUpdateWindow} onOpenChange={setOpenUpdateWindow}>
+            <DrawerContent>
+              <form onSubmit={handleUpdate}>
+                <div className="text-sm text-slate-500  mt-4">제목</div>
+                <Input
+                  defaultValue={data.title}
+                  name="title"
+                  type="text"
+                  required
+                />
+
+                <div className="text-sm text-slate-500 mt-4">카테고리</div>
+                <Select name="category" defaultValue={data.category}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="concern">고민</SelectItem>
+                      <SelectItem value="question">질문</SelectItem>
+                      <SelectItem value="daily">일상</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+
+                <div className="text-sm text-slate-500  mt-4">내용</div>
+                <Textarea defaultValue={data.content} name="content" required />
+                <DialogFooter>
+                  <Button type="submit" className="mt-4">
+                    완료
+                  </Button>
+                </DialogFooter>
+              </form>
+            </DrawerContent>
+          </Drawer>
         </div>
       </div>
     </div>
