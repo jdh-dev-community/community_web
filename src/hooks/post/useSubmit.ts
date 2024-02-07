@@ -23,7 +23,7 @@ export const useSubmit = () => {
     const { result } = await res.json();
 
     if (result !== null) {
-      router.push(`/post/${result.postId}`);
+      router.replace(`/post/${result.postId}`);
     } else {
       // 팝업 UI 변경
       alert("글 작성 실패");
