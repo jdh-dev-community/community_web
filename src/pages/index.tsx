@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button";
 import { GetServerSideProps } from "next";
 import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Board } from "./api/postList";
 
 const inter = Inter({ subsets: ["latin"] });
-const PAGE_SIZE = 8;
+
+const PAGE_SIZE = 16;
 
 export default function Home({
   data,
@@ -26,13 +27,29 @@ export default function Home({
   const [isLoading, setLoading] = useState(false);
   const [page, setPage] = useState(initPageSize);
   const [listSortType, setListSortType] = useState(NEWEST);
+  const observer = useRef<IntersectionObserver | null>(null);
+  const hasMoreContent = useRef(true);
 
-  const target = useRef<HTMLDivElement>(null);
+  const target = useCallback(
+    (node: HTMLElement) => {
+      if (isLoading) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          loadMore();
+        }
+      });
+
+      if (node) observer.current.observe(node);
+    },
+    [isLoading]
+  );
 
   const route = useRouter();
 
   const fetchPostCards = async (currentPage: number) => {
     if (cards?.length === totalElement && currentPage !== 2) return;
+    if (!hasMoreContent.current) return;
 
     setLoading(true);
     if (isLoading) return;
@@ -42,6 +59,10 @@ export default function Home({
     );
 
     const newCards = await response.json();
+
+    if (newCards?.content?.length < PAGE_SIZE) {
+      hasMoreContent.current = false;
+    }
 
     setCards((prevCards) => [...prevCards, ...(newCards?.content ?? [])]);
 
@@ -66,22 +87,6 @@ export default function Home({
     setPage(1);
   };
 
-  useEffect(() => {
-    let observer: IntersectionObserver;
-    if (target) {
-      observer = new IntersectionObserver(
-        (entries) => {
-          if (entries[0].isIntersecting) {
-            loadMore();
-          }
-        },
-        { threshold: 0 }
-      );
-      observer.observe(target.current as Element);
-    }
-    return () => observer.disconnect();
-  }, [target]);
-
   const goRoutePost = () => {
     route.push("/post");
   };
@@ -103,25 +108,21 @@ export default function Home({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {cards?.map((card, index) => (
-            <MainCard key={index} {...card} />
-          ))}
-        </div>
-        <div ref={target}>
-          {isLoading && (
-            <div
-              style={{
-                textAlign: "center",
-                lineHeight: 5,
-                fontSize: "2rem",
-                border: "1px solid black",
-                height: 200,
-                background: "#eee",
-              }}
-            >
-              Loading...
-            </div>
-          )}
+          {cards?.map((card, index) => {
+            if (index === cards?.length - 1) {
+              return (
+                <div key={index.toString()} ref={target}>
+                  <MainCard key={index} {...card} />
+                </div>
+              );
+            }
+
+            return (
+              <div key={index.toString()}>
+                <MainCard key={index} {...card} />
+              </div>
+            );
+          })}
         </div>
       </div>
     </main>
