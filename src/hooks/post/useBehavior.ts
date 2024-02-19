@@ -5,20 +5,20 @@ type FormValues = { [key: string]: string };
 
 export const useBehavior = () => {
   const [openForm, setOpenForm] = useState(false);
-  const [values, setValues] = useState<FormValues>({});
+  const [formValues, setFormValues] = useState<FormValues>({});
 
   const { isMobile } = useDevice();
 
   const changedFormValues = useRef({});
 
   useEffect(() => {
-    setValues(changedFormValues.current);
+    setFormValues(changedFormValues.current);
   }, [isMobile]);
 
   useEffect(() => {
     if (!openForm) {
       changedFormValues.current = {};
-      setValues({});
+      setFormValues({});
     }
   }, [openForm]);
 
@@ -33,7 +33,7 @@ export const useBehavior = () => {
 
   return {
     isMobile,
-    formValues: values,
+    formValues,
     openForm,
     onChangeForm,
     setOpenForm,

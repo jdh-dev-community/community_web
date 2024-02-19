@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogClose,
@@ -25,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useBehavior } from "@/hooks/post/useBehavior";
+import { usePassword } from "@/hooks/post/usePassword";
 import { useSubmit } from "@/hooks/post/useSubmit";
 
 export const CreationFormModal = () => {
@@ -87,6 +89,8 @@ const CreationForm = ({
 }: {
   formValues: { [key: string]: string };
 }) => {
+  const { isVisiblePassword, handleCheckBox } = usePassword();
+
   return (
     <>
       <div className="text-slate-400 text-xs mb-1 ml-1">닉네임</div>
@@ -100,14 +104,24 @@ const CreationForm = ({
 
       <div className="text-slate-400 text-xs mb-1 ml-1">비밀번호</div>
       <Input
-        className="mb-4 placeholder:text-slate-400"
-        type="password"
+        className="mb-2 placeholder:text-slate-400"
+        type={isVisiblePassword ? "text" : "password"}
         name="password"
         pattern="\S{4,}"
         placeholder="4자 이상 입력해주세요"
         defaultValue={formValues?.password ?? ""}
         required
       />
+
+      <div className="flex items-center mb-4 ml-1">
+        <Checkbox id="terms" onCheckedChange={handleCheckBox} />
+        <label
+          htmlFor="terms"
+          className="text-xs ml-1 text-slate-600 peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+        >
+          비밀번호 보기
+        </label>
+      </div>
 
       <div className="text-slate-400 text-xs mb-1 ml-1">카테고리</div>
 
