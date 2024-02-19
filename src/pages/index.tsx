@@ -1,8 +1,8 @@
 import { MainCard } from "@/components/card";
 import { Header } from "@/components/header";
 import { SortingButtons } from "@/components/home";
+import { CreationFormModal } from "@/components/home/CreationFormModal";
 import { NEWEST } from "@/components/home/SortButton";
-import { Button } from "@/components/ui/button";
 import { GetServerSideProps } from "next";
 import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
@@ -87,10 +87,6 @@ export default function Home({
     setPage(1);
   };
 
-  const goRoutePost = () => {
-    route.push("/post");
-  };
-
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
@@ -100,7 +96,7 @@ export default function Home({
 
       <div className="container mx-auto px-4">
         <div className="flex justify-between">
-          <Button onClick={goRoutePost}>글 작성하기</Button>
+          <CreationFormModal />
           <SortingButtons
             currentType={listSortType}
             onClickButton={handleClickSortType}
