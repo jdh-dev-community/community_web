@@ -1,13 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
   Drawer,
   DrawerClose,
   DrawerContent,
@@ -25,82 +18,49 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useBehavior } from "@/hooks/post/useBehavior";
+
 import { usePassword } from "@/hooks/post/usePassword";
 import { useSubmit } from "@/hooks/post/useSubmit";
+import { useState } from "react";
 
 export const CreationFormModal = () => {
-  const { isMobile, formValues, openForm, onChangeForm, setOpenForm } =
-    useBehavior();
+  const [openForm, setOpenForm] = useState(false);
   const { onSubmit } = useSubmit();
 
-  if (isMobile) {
-    return (
-      <Drawer open={openForm} onOpenChange={setOpenForm}>
-        <DrawerTrigger asChild>
-          <Button variant="default">글 작성하기</Button>
-        </DrawerTrigger>
-        <DrawerContent>
-          <form onSubmit={onSubmit} className="p-10" onChange={onChangeForm}>
-            <CreationForm formValues={formValues} />
-
-            <DrawerFooter className="flex flex-row justify-end">
-              <DrawerClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DrawerClose>
-
-              <Button type="submit" className="w-20">
-                등록
-              </Button>
-            </DrawerFooter>
-          </form>
-        </DrawerContent>
-      </Drawer>
-    );
-  }
-
   return (
-    <Dialog open={openForm} onOpenChange={setOpenForm}>
-      <DialogTrigger asChild>
+    <Drawer open={openForm} onOpenChange={setOpenForm}>
+      <DrawerTrigger asChild>
         <Button variant="default">글 작성하기</Button>
-      </DialogTrigger>
+      </DrawerTrigger>
+      <DrawerContent className="max-h-[84%]">
+        <form
+          onSubmit={onSubmit}
+          className="p-10 overflow-auto mx-auto w-full max-w-[767px]"
+        >
+          <CreationForm />
 
-      <DialogContent>
-        <form onSubmit={onSubmit} className="p-10" onChange={onChangeForm}>
-          <CreationForm formValues={formValues} />
-
-          <DialogFooter className="flex flex-row justify-end mt-4">
-            <DialogClose asChild>
+          <DrawerFooter className="flex flex-row justify-end">
+            <DrawerClose asChild>
               <Button variant="outline">Cancel</Button>
-            </DialogClose>
+            </DrawerClose>
 
             <Button type="submit" className="w-20">
               등록
             </Button>
-          </DialogFooter>
+          </DrawerFooter>
         </form>
-      </DialogContent>
-    </Dialog>
+      </DrawerContent>
+    </Drawer>
   );
 };
 
-const CreationForm = ({
-  formValues,
-}: {
-  formValues: { [key: string]: string };
-}) => {
+const CreationForm = () => {
   const { isVisiblePassword, handleCheckBox } = usePassword();
 
   return (
     <>
       <div className="text-slate-400 text-xs mb-1 ml-1">닉네임</div>
-      <Input
-        className="mb-4"
-        type="text"
-        name="creator"
-        defaultValue={formValues?.creator ?? ""}
-        required
-      />
+      <Input className="mb-4" type="text" name="creator" required />
 
       <div className="text-slate-400 text-xs mb-1 ml-1">비밀번호</div>
       <Input
@@ -109,7 +69,6 @@ const CreationForm = ({
         name="password"
         pattern="\S{4,}"
         placeholder="4자 이상 입력해주세요"
-        defaultValue={formValues?.password ?? ""}
         required
       />
 
@@ -125,7 +84,7 @@ const CreationForm = ({
 
       <div className="text-slate-400 text-xs mb-1 ml-1">카테고리</div>
 
-      <Select name="category" defaultValue={formValues?.category ?? ""}>
+      <Select name="category">
         <SelectTrigger className="mb-4 data-[placeholder]:text-slate-400">
           <SelectValue placeholder="선택해 주세요" />
         </SelectTrigger>
@@ -141,19 +100,12 @@ const CreationForm = ({
       </Select>
 
       <div className="text-slate-400 text-xs mb-1 ml-1">제목</div>
-      <Input
-        type="text"
-        name="title"
-        className="mb-4"
-        defaultValue={formValues?.title ?? ""}
-        required
-      />
+      <Input type="text" name="title" className="mb-4" required />
 
       <Textarea
-        className="placeholder:text-slate-400"
+        className="placeholder:text-slate-400 min-h-52"
         name="content"
         placeholder="내용을 입력해주세요"
-        defaultValue={formValues?.content ?? ""}
         required
       />
     </>
