@@ -36,3 +36,24 @@ interface PostDetail_Request_Path {
 interface PostDetail_Response extends BASE_POST {
   comments: BASE_COMMENT[];
 }
+
+// 게시글 생성 요청
+interface PostCreate_Request_Body {
+  title: string;
+  category: CATEGORY;
+  creator: string;
+  content: string;
+  password: string;
+}
+
+// 게시글 생성 응답
+interface PostCreate_Response {
+  postId: number;
+  title: string;
+  content: string;
+  category: string;
+  creator: string;
+  viewCount: number;
+  commentCount: number;
+  createdAt: string;
+}
