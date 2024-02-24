@@ -8,6 +8,7 @@ export type Board = {
   postId: number;
   title: string;
   viewCount: number;
+  onClick?: (id: number) => void;
 };
 
 export default async function handler(

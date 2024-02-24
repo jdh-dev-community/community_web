@@ -11,7 +11,7 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Drawer, DrawerContent } from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerPortal } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -27,11 +27,15 @@ import { usePostManage } from "@/hooks/postDetail/usePostManage";
 import { useRouter } from "next/router";
 import { FormEvent, useRef, useState } from "react";
 import { Board } from "../api/postList";
+import { DialogPortal } from "@radix-ui/react-dialog";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 export default function PostDetail({
   data,
+  isOpen,
 }: {
   data: Board & { comments: any[] };
+  isOpen: boolean;
 }) {
   const router = useRouter();
   const { removePost, getToken, updatePost } = usePostManage();
@@ -119,208 +123,238 @@ export default function PostDetail({
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div
-        className="h-40 flex items-center justify-center"
-        style={{ backgroundColor: colors.primary }}
-      />
+    <Sheet open={isOpen}>
+      <SheetContent>
+        <div className="min-h-screen bg-white">
+          <div
+            className="h-40 flex items-center justify-center"
+            style={{ backgroundColor: colors.primary }}
+          />
 
-      <div className="bg-white">
-        <div className="h-20 flex items-center justify-center">
-          <h1 className="text-black text-3xl">{data.title}</h1>
-        </div>
-
-        {/* 카드 형식의 컨텐츠 */}
-        <div className="max-w-2xl mx-auto p-5">
-          <div className="flex justify-end mb-2">
-            <Dialog open={openUpdateDialog} onOpenChange={setOpenUpdateDialog}>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="ml-2">
-                  수정
-                </Button>
-              </DialogTrigger>
-
-              <DialogContent>
-                <form onSubmit={checkUser}>
-                  <Input
-                    placeholder="비밀번호"
-                    name="password"
-                    type="text"
-                    className="mt-6"
-                    required
-                  />
-                  <DialogFooter>
-                    <Button
-                      type="submit"
-                      variant="destructive"
-                      className="mt-4"
-                    >
-                      확인
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
-
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="ml-2">
-                  삭제
-                </Button>
-              </DialogTrigger>
-
-              <DialogContent>
-                <form onSubmit={handleRemove}>
-                  <Input
-                    placeholder="비밀번호"
-                    name="password"
-                    type="text"
-                    className="mt-6"
-                    required
-                  />
-                  <DialogFooter>
-                    <Button
-                      type="submit"
-                      variant="destructive"
-                      className="mt-4"
-                    >
-                      확인
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
-
-          <div className="bg-gray-100 p-6 rounded-lg shadow-md">
-            <div className="text-sm text-gray-500 mb-2">
-              작성자 : {data.creator} | 조회수: {data.viewCount} | 카테고리:{" "}
-              {data.category}
+          <div className="bg-white">
+            <div className="h-20 flex items-center justify-center">
+              <h1 className="text-black text-3xl">{data.title}</h1>
             </div>
-            <div className="text-sm text-gray-500 mb-4">
-              작성일 :
-              {data.createdAt
-                ? convertDateFormat(data.createdAt)
-                : "알 수 없음"}
-            </div>
-            <p className="text-gray-800">{data.content}</p>
-          </div>
 
-          <div className="flex justify-between mt-11 mb-2">
-            <div className="self-end">댓글</div>
+            {/* 카드 형식의 컨텐츠 */}
+            <div className="max-w-2xl mx-auto p-5">
+              <div className="flex justify-end mb-2">
+                <Dialog
+                  open={openUpdateDialog}
+                  onOpenChange={setOpenUpdateDialog}
+                >
+                  <DialogPortal>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" className="ml-2">
+                        수정
+                      </Button>
+                    </DialogTrigger>
 
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button onClick={() => setCommentId(null)}>댓글 작성</Button>
-              </DialogTrigger>
-              <DialogContent>
-                <CommentForm
-                  handleSubmit={handleCommentSubmit}
-                  setComment={setComment}
-                  comment={comment}
-                />
-              </DialogContent>
-            </Dialog>
-          </div>
-
-          {/* 댓글 목록 */}
-          {data.comments.map((content) => {
-            return (
-              <Card key={content.commentId} className="p-6 mb-1">
-                <div className="flex justify-between">
-                  <div className="text-sm text-gray-500">{content.creator}</div>
-                  <div className="text-sm text-gray-500 mb-4 text-xs">
-                    {content.createdAt
-                      ? convertDateFormat(content.createdAt)
-                      : "알 수 없음"}
-                  </div>
-                </div>
-
-                <p className="text-gray-800">{content.content}</p>
-
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      onClick={() => setCommentId(content.commentId)}
-                      variant="secondary"
-                      size="icon"
-                    >
-                      답글
-                    </Button>
-                  </DialogTrigger>
-
-                  <DialogContent>
-                    <CommentForm
-                      handleSubmit={handleCommentSubmit}
-                      setComment={setComment}
-                      comment={comment}
-                    />
-                  </DialogContent>
+                    <DialogContent>
+                      <form onSubmit={checkUser}>
+                        <Input
+                          placeholder="비밀번호"
+                          name="password"
+                          type="text"
+                          className="mt-6"
+                          required
+                        />
+                        <DialogFooter>
+                          <Button
+                            type="submit"
+                            variant="destructive"
+                            className="mt-4"
+                          >
+                            확인
+                          </Button>
+                        </DialogFooter>
+                      </form>
+                    </DialogContent>
+                  </DialogPortal>
                 </Dialog>
 
-                {/* 대댓글 목록 */}
-                {content.children.map((reply: any) => {
-                  return (
-                    <div key={reply.commentId} className="ml-6 my-2">
-                      <Separator className="my-2" />
-                      <div className="flex justify-between">
-                        <div className="text-sm text-gray-500">
-                          {reply.creator}
-                        </div>
-                        <div className="text-sm text-gray-500 mb-4 text-xs">
-                          {reply.createdAt
-                            ? convertDateFormat(reply.createdAt)
-                            : "알 수 없음"}
-                        </div>
+                <Dialog>
+                  <DialogPortal>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" className="ml-2">
+                        삭제
+                      </Button>
+                    </DialogTrigger>
+
+                    <DialogContent>
+                      <form onSubmit={handleRemove}>
+                        <Input
+                          placeholder="비밀번호"
+                          name="password"
+                          type="text"
+                          className="mt-6"
+                          required
+                        />
+                        <DialogFooter>
+                          <Button
+                            type="submit"
+                            variant="destructive"
+                            className="mt-4"
+                          >
+                            확인
+                          </Button>
+                        </DialogFooter>
+                      </form>
+                    </DialogContent>
+                  </DialogPortal>
+                </Dialog>
+              </div>
+
+              <div className="bg-gray-100 p-6 rounded-lg shadow-md">
+                <div className="text-sm text-gray-500 mb-2">
+                  작성자 : {data.creator} | 조회수: {data.viewCount} | 카테고리:{" "}
+                  {data.category}
+                </div>
+                <div className="text-sm text-gray-500 mb-4">
+                  작성일 :
+                  {data.createdAt
+                    ? convertDateFormat(data.createdAt)
+                    : "알 수 없음"}
+                </div>
+                <p className="text-gray-800">{data.content}</p>
+              </div>
+
+              <div className="flex justify-between mt-11 mb-2">
+                <div className="self-end">댓글</div>
+
+                <Dialog>
+                  <DialogPortal>
+                    <DialogTrigger asChild>
+                      <Button onClick={() => setCommentId(null)}>
+                        댓글 작성
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <CommentForm
+                        handleSubmit={handleCommentSubmit}
+                        setComment={setComment}
+                        comment={comment}
+                      />
+                    </DialogContent>
+                  </DialogPortal>
+                </Dialog>
+              </div>
+
+              {/* 댓글 목록 */}
+              {data.comments.map((content) => {
+                return (
+                  <Card key={content.commentId} className="p-6 mb-1">
+                    <div className="flex justify-between">
+                      <div className="text-sm text-gray-500">
+                        {content.creator}
                       </div>
-
-                      <p className="text-gray-800">{reply.content}</p>
+                      <div className="text-sm text-gray-500 mb-4 text-xs">
+                        {content.createdAt
+                          ? convertDateFormat(content.createdAt)
+                          : "알 수 없음"}
+                      </div>
                     </div>
-                  );
-                })}
-              </Card>
-            );
-          })}
 
-          <Drawer open={openUpdateWindow} onOpenChange={setOpenUpdateWindow}>
-            <DrawerContent>
-              <form onSubmit={handleUpdate}>
-                <div className="text-sm text-slate-500  mt-4">제목</div>
-                <Input
-                  defaultValue={data.title}
-                  name="title"
-                  type="text"
-                  required
-                />
+                    <p className="text-gray-800">{content.content}</p>
 
-                <div className="text-sm text-slate-500 mt-4">카테고리</div>
-                <Select name="category" defaultValue={data.category}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue />
-                  </SelectTrigger>
+                    <Dialog>
+                      <DialogPortal>
+                        <DialogTrigger asChild>
+                          <Button
+                            onClick={() => setCommentId(content.commentId)}
+                            variant="secondary"
+                            size="icon"
+                          >
+                            답글
+                          </Button>
+                        </DialogTrigger>
 
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="concern">고민</SelectItem>
-                      <SelectItem value="question">질문</SelectItem>
-                      <SelectItem value="daily">일상</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                        <DialogContent>
+                          <CommentForm
+                            handleSubmit={handleCommentSubmit}
+                            setComment={setComment}
+                            comment={comment}
+                          />
+                        </DialogContent>
+                      </DialogPortal>
+                    </Dialog>
 
-                <div className="text-sm text-slate-500  mt-4">내용</div>
-                <Textarea defaultValue={data.content} name="content" required />
-                <DialogFooter>
-                  <Button type="submit" className="mt-4">
-                    완료
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DrawerContent>
-          </Drawer>
+                    {/* 대댓글 목록 */}
+                    {content.children.map((reply: any) => {
+                      return (
+                        <div key={reply.commentId} className="ml-6 my-2">
+                          <Separator className="my-2" />
+                          <div className="flex justify-between">
+                            <div className="text-sm text-gray-500">
+                              {reply.creator}
+                            </div>
+                            <div className="text-sm text-gray-500 mb-4 text-xs">
+                              {reply.createdAt
+                                ? convertDateFormat(reply.createdAt)
+                                : "알 수 없음"}
+                            </div>
+                          </div>
+
+                          <p className="text-gray-800">{reply.content}</p>
+                        </div>
+                      );
+                    })}
+                  </Card>
+                );
+              })}
+
+              <Drawer
+                open={openUpdateWindow}
+                onOpenChange={setOpenUpdateWindow}
+              >
+                <DrawerPortal>
+                  <DrawerContent>
+                    <form onSubmit={handleUpdate}>
+                      <div className="text-sm text-slate-500  mt-4">제목</div>
+                      <Input
+                        defaultValue={data.title}
+                        name="title"
+                        type="text"
+                        required
+                      />
+
+                      <div className="text-sm text-slate-500 mt-4">
+                        카테고리
+                      </div>
+                      <Select name="category" defaultValue={data.category}>
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectItem value="concern">고민</SelectItem>
+                            <SelectItem value="question">질문</SelectItem>
+                            <SelectItem value="daily">일상</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+
+                      <div className="text-sm text-slate-500  mt-4">내용</div>
+                      <Textarea
+                        defaultValue={data.content}
+                        name="content"
+                        required
+                      />
+                      <DialogFooter>
+                        <Button type="submit" className="mt-4">
+                          완료
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DrawerContent>
+                </DrawerPortal>
+              </Drawer>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </SheetContent>
+    </Sheet>
   );
 }
 
