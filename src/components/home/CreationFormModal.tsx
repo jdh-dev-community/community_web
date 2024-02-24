@@ -21,14 +21,12 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { usePassword } from "@/hooks/post/usePassword";
 import { useSubmit } from "@/hooks/post/useSubmit";
-import { useState } from "react";
 
 export const CreationFormModal = () => {
-  const [openForm, setOpenForm] = useState(false);
   const { onSubmit } = useSubmit();
 
   return (
-    <Drawer open={openForm} onOpenChange={setOpenForm}>
+    <Drawer>
       <DrawerTrigger asChild>
         <Button variant="default">글 작성하기</Button>
       </DrawerTrigger>
@@ -41,7 +39,9 @@ export const CreationFormModal = () => {
 
           <DrawerFooter className="flex flex-row justify-end">
             <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline" className="w-20">
+                취소
+              </Button>
             </DrawerClose>
 
             <Button type="submit" className="w-20">
@@ -92,9 +92,9 @@ const CreationForm = () => {
         <SelectContent>
           <SelectGroup>
             <SelectLabel>카테고리</SelectLabel>
-            <SelectItem value="concern">고민</SelectItem>
+            <SelectItem value="ad">홍보</SelectItem>
             <SelectItem value="question">질문</SelectItem>
-            <SelectItem value="daily">일상</SelectItem>
+            <SelectItem value="consulting">상담</SelectItem>
           </SelectGroup>
         </SelectContent>
       </Select>
