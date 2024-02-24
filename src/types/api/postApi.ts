@@ -47,13 +47,18 @@ interface PostCreate_Request_Body {
 }
 
 // 게시글 생성 응답
-interface PostCreate_Response {
-  postId: number;
+interface PostCreate_Response extends BASE_POST {
+  commentCount: number;
+}
+
+// 게시글 수정하기 요청
+interface PostEdit_Request_Body {
   title: string;
   content: string;
   category: string;
-  creator: string;
-  viewCount: number;
+}
+
+// 게시글 수정하기 응답
+interface PostEdit_Response extends BASE_POST {
   commentCount: number;
-  createdAt: string;
 }
