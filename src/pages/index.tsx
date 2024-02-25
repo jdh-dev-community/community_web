@@ -93,10 +93,9 @@ export default function Home({
   };
 
   const handleClick = async (id: number) => {
-    console.log("id :>> ", id);
     const response = await fetch(`/api/post/${id}`);
     const data = await response.json();
-    console.log("data :>> ", data);
+
     setDetailData(data);
     setOpen(true);
   };
@@ -136,7 +135,9 @@ export default function Home({
         </div>
       </div>
 
-      {detailData !== null && <PostDetail data={detailData} isOpen={open} />}
+      {detailData !== null && (
+        <PostDetail data={detailData} isOpen={open} setOpen={setOpen} />
+      )}
     </main>
   );
 }

@@ -1,7 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { colors } from "@/styles/theme";
 import { convertDateFormat } from "@/utils/dateUtils";
-import { GetServerSideProps } from "next";
 
 import { CommentForm } from "@/components/postDetail/CommentForm";
 import { Button } from "@/components/ui/button";
@@ -11,7 +9,7 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Drawer, DrawerContent, DrawerPortal } from "@/components/ui/drawer";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -22,20 +20,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { usePostManage } from "@/hooks/postDetail/usePostManage";
 import { useRouter } from "next/router";
-import { FormEvent, useRef, useState } from "react";
+import { Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
 import { Board } from "../api/postList";
-import { DialogPortal } from "@radix-ui/react-dialog";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
 
 export default function PostDetail({
   data,
   isOpen,
+  setOpen,
 }: {
   data: Board & { comments: any[] };
   isOpen: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const router = useRouter();
   const { removePost, getToken, updatePost } = usePostManage();
@@ -123,14 +122,9 @@ export default function PostDetail({
   };
 
   return (
-    <Sheet open={isOpen}>
+    <Sheet open={isOpen} onOpenChange={setOpen}>
       <SheetContent>
         <div className="min-h-screen bg-white">
-          <div
-            className="h-40 flex items-center justify-center"
-            style={{ backgroundColor: colors.primary }}
-          />
-
           <div className="bg-white">
             <div className="h-20 flex items-center justify-center">
               <h1 className="text-black text-3xl">{data.title}</h1>
@@ -143,65 +137,61 @@ export default function PostDetail({
                   open={openUpdateDialog}
                   onOpenChange={setOpenUpdateDialog}
                 >
-                  <DialogPortal>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" className="ml-2">
-                        수정
-                      </Button>
-                    </DialogTrigger>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="ml-2">
+                      수정
+                    </Button>
+                  </DialogTrigger>
 
-                    <DialogContent>
-                      <form onSubmit={checkUser}>
-                        <Input
-                          placeholder="비밀번호"
-                          name="password"
-                          type="text"
-                          className="mt-6"
-                          required
-                        />
-                        <DialogFooter>
-                          <Button
-                            type="submit"
-                            variant="destructive"
-                            className="mt-4"
-                          >
-                            확인
-                          </Button>
-                        </DialogFooter>
-                      </form>
-                    </DialogContent>
-                  </DialogPortal>
+                  <DialogContent>
+                    <form onSubmit={checkUser}>
+                      <Input
+                        placeholder="비밀번호"
+                        name="password"
+                        type="text"
+                        className="mt-6"
+                        required
+                      />
+                      <DialogFooter>
+                        <Button
+                          type="submit"
+                          variant="destructive"
+                          className="mt-4"
+                        >
+                          확인
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
                 </Dialog>
 
                 <Dialog>
-                  <DialogPortal>
-                    <DialogTrigger asChild>
-                      <Button variant="outline" className="ml-2">
-                        삭제
-                      </Button>
-                    </DialogTrigger>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="ml-2">
+                      삭제
+                    </Button>
+                  </DialogTrigger>
 
-                    <DialogContent>
-                      <form onSubmit={handleRemove}>
-                        <Input
-                          placeholder="비밀번호"
-                          name="password"
-                          type="text"
-                          className="mt-6"
-                          required
-                        />
-                        <DialogFooter>
-                          <Button
-                            type="submit"
-                            variant="destructive"
-                            className="mt-4"
-                          >
-                            확인
-                          </Button>
-                        </DialogFooter>
-                      </form>
-                    </DialogContent>
-                  </DialogPortal>
+                  <DialogContent>
+                    <form onSubmit={handleRemove}>
+                      <Input
+                        placeholder="비밀번호"
+                        name="password"
+                        type="text"
+                        className="mt-6"
+                        required
+                      />
+                      <DialogFooter>
+                        <Button
+                          type="submit"
+                          variant="destructive"
+                          className="mt-4"
+                        >
+                          확인
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
                 </Dialog>
               </div>
 
@@ -223,20 +213,18 @@ export default function PostDetail({
                 <div className="self-end">댓글</div>
 
                 <Dialog>
-                  <DialogPortal>
-                    <DialogTrigger asChild>
-                      <Button onClick={() => setCommentId(null)}>
-                        댓글 작성
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <CommentForm
-                        handleSubmit={handleCommentSubmit}
-                        setComment={setComment}
-                        comment={comment}
-                      />
-                    </DialogContent>
-                  </DialogPortal>
+                  <DialogTrigger asChild>
+                    <Button onClick={() => setCommentId(null)}>
+                      댓글 작성
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <CommentForm
+                      handleSubmit={handleCommentSubmit}
+                      setComment={setComment}
+                      comment={comment}
+                    />
+                  </DialogContent>
                 </Dialog>
               </div>
 
@@ -258,25 +246,23 @@ export default function PostDetail({
                     <p className="text-gray-800">{content.content}</p>
 
                     <Dialog>
-                      <DialogPortal>
-                        <DialogTrigger asChild>
-                          <Button
-                            onClick={() => setCommentId(content.commentId)}
-                            variant="secondary"
-                            size="icon"
-                          >
-                            답글
-                          </Button>
-                        </DialogTrigger>
+                      <DialogTrigger asChild>
+                        <Button
+                          onClick={() => setCommentId(content.commentId)}
+                          variant="secondary"
+                          size="icon"
+                        >
+                          답글
+                        </Button>
+                      </DialogTrigger>
 
-                        <DialogContent>
-                          <CommentForm
-                            handleSubmit={handleCommentSubmit}
-                            setComment={setComment}
-                            comment={comment}
-                          />
-                        </DialogContent>
-                      </DialogPortal>
+                      <DialogContent>
+                        <CommentForm
+                          handleSubmit={handleCommentSubmit}
+                          setComment={setComment}
+                          comment={comment}
+                        />
+                      </DialogContent>
                     </Dialog>
 
                     {/* 대댓글 목록 */}
@@ -307,48 +293,44 @@ export default function PostDetail({
                 open={openUpdateWindow}
                 onOpenChange={setOpenUpdateWindow}
               >
-                <DrawerPortal>
-                  <DrawerContent>
-                    <form onSubmit={handleUpdate}>
-                      <div className="text-sm text-slate-500  mt-4">제목</div>
-                      <Input
-                        defaultValue={data.title}
-                        name="title"
-                        type="text"
-                        required
-                      />
+                <DrawerContent>
+                  <form onSubmit={handleUpdate}>
+                    <div className="text-sm text-slate-500  mt-4">제목</div>
+                    <Input
+                      defaultValue={data.title}
+                      name="title"
+                      type="text"
+                      required
+                    />
 
-                      <div className="text-sm text-slate-500 mt-4">
-                        카테고리
-                      </div>
-                      <Select name="category" defaultValue={data.category}>
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue />
-                        </SelectTrigger>
+                    <div className="text-sm text-slate-500 mt-4">카테고리</div>
+                    <Select name="category" defaultValue={data.category}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue />
+                      </SelectTrigger>
 
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectItem value="concern">고민</SelectItem>
-                            <SelectItem value="question">질문</SelectItem>
-                            <SelectItem value="daily">일상</SelectItem>
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="concern">고민</SelectItem>
+                          <SelectItem value="question">질문</SelectItem>
+                          <SelectItem value="daily">일상</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
 
-                      <div className="text-sm text-slate-500  mt-4">내용</div>
-                      <Textarea
-                        defaultValue={data.content}
-                        name="content"
-                        required
-                      />
-                      <DialogFooter>
-                        <Button type="submit" className="mt-4">
-                          완료
-                        </Button>
-                      </DialogFooter>
-                    </form>
-                  </DrawerContent>
-                </DrawerPortal>
+                    <div className="text-sm text-slate-500  mt-4">내용</div>
+                    <Textarea
+                      defaultValue={data.content}
+                      name="content"
+                      required
+                    />
+                    <DialogFooter>
+                      <Button type="submit" className="mt-4">
+                        완료
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DrawerContent>
               </Drawer>
             </div>
           </div>
@@ -357,15 +339,3 @@ export default function PostDetail({
     </Sheet>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const id = context.params?.id as string;
-  const response = await fetch(`http://3.36.204.107/api/v1/post/${id}`);
-  const data = await response.json();
-
-  return {
-    props: {
-      data,
-    },
-  };
-};
