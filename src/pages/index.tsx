@@ -52,7 +52,7 @@ export default function Home({
 
   const route = useRouter();
 
-  const fetchPostCards = async (currentPage: number) => {
+  const fetchPostCards = async (currentPage: number, isReset: boolean) => {
     if (cards?.length === totalElement && currentPage !== 2) return;
     if (!hasMoreContent.current) return;
 
@@ -69,7 +69,11 @@ export default function Home({
       hasMoreContent.current = false;
     }
 
-    setCards((prevCards) => [...prevCards, ...(newCards?.content ?? [])]);
+    if (isReset) {
+      setCards(newCards?.content ?? []);
+    } else {
+      setCards((prevCards) => [...prevCards, ...(newCards?.content ?? [])]);
+    }
 
     setLoading(false);
   };
@@ -80,7 +84,7 @@ export default function Home({
       return;
     }
 
-    fetchPostCards(page);
+    fetchPostCards(page, page === 1);
   }, [page, listSortType]);
 
   const loadMore = () => {
@@ -107,7 +111,7 @@ export default function Home({
     >
       <Header />
 
-      <div className="container mx-auto px-2 sm:px-4">
+      <div className="container mx-auto px-2 sm:px-4 pt-5">
         <div className="flex sm:flex-row justify-between">
           <CreationFormModal />
           <SortingButtons

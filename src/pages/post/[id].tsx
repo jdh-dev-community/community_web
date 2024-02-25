@@ -123,15 +123,15 @@ export default function PostDetail({
 
   return (
     <Sheet open={isOpen} onOpenChange={setOpen}>
-      <SheetContent>
+      <SheetContent className="w-[400px] sm:w-[540px] sm:min-w-[1200px]">
         <div className="min-h-screen bg-white">
           <div className="bg-white">
-            <div className="h-20 flex items-center justify-center">
-              <h1 className="text-black text-3xl">{data.title}</h1>
+            <div className="h-20 flex items-center justify-center mt-10">
+              <h1 className="text-black text-3xl font-bold">{data.title}</h1>
             </div>
 
             {/* 카드 형식의 컨텐츠 */}
-            <div className="max-w-2xl mx-auto p-5">
+            <div className="max-w mx-auto sm:p-5">
               <div className="flex justify-end mb-2">
                 <Dialog
                   open={openUpdateDialog}
@@ -194,19 +194,26 @@ export default function PostDetail({
                   </DialogContent>
                 </Dialog>
               </div>
+              <div className="bg-white p-8 rounded-lg shadow-lg">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-1">
+                  <div className="text-base font-medium text-gray-700">
+                    <span>작성자: {data.creator}</span>
+                    <span className="mx-3">•</span>
+                    <span>조회수: {data.viewCount}</span>
+                  </div>
 
-              <div className="bg-gray-100 p-6 rounded-lg shadow-md">
-                <div className="text-sm text-gray-500 mb-2">
-                  작성자 : {data.creator} | 조회수: {data.viewCount} | 카테고리:{" "}
-                  {data.category}
+                  <div className="text-base text-gray-600">
+                    작성일:{" "}
+                    {data.createdAt
+                      ? convertDateFormat(data.createdAt)
+                      : "알 수 없음"}
+                  </div>
                 </div>
-                <div className="text-sm text-gray-500 mb-4">
-                  작성일 :
-                  {data.createdAt
-                    ? convertDateFormat(data.createdAt)
-                    : "알 수 없음"}
+                <div className="text-base font-medium text-gray-700  mb-6">
+                  카테고리: {data.category}
                 </div>
-                <p className="text-gray-800">{data.content}</p>
+
+                <p className="text-gray-800 text-lg">{data.content}</p>
               </div>
 
               <div className="flex justify-between mt-11 mb-2">
@@ -229,7 +236,7 @@ export default function PostDetail({
               </div>
 
               {/* 댓글 목록 */}
-              {data.comments.map((content) => {
+              {data.comments?.map((content) => {
                 return (
                   <Card key={content.commentId} className="p-6 mb-1">
                     <div className="flex justify-between">
@@ -266,7 +273,7 @@ export default function PostDetail({
                     </Dialog>
 
                     {/* 대댓글 목록 */}
-                    {content.children.map((reply: any) => {
+                    {content.children?.map((reply: any) => {
                       return (
                         <div key={reply.commentId} className="ml-6 my-2">
                           <Separator className="my-2" />
