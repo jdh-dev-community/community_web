@@ -17,13 +17,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 
 import { usePassword } from "@/hooks/post/usePassword";
 import { useSubmit } from "@/hooks/post/useSubmit";
 
+import dynamic from "next/dynamic";
+
+const ContentEditor = dynamic(() => import("../common/ContentEditor"), {
+  ssr: false,
+});
+
 export const CreationFormModal = () => {
-  const { onSubmit } = useSubmit();
+  const { onSubmit, onEditContent } = useSubmit();
 
   return (
     <Drawer>
@@ -35,7 +40,7 @@ export const CreationFormModal = () => {
           onSubmit={onSubmit}
           className="p-10 overflow-auto mx-auto w-full max-w-[767px]"
         >
-          <CreationForm />
+          <CreationForm onEditContent={onEditContent} />
 
           <DrawerFooter className="flex flex-row justify-end">
             <DrawerClose asChild>
@@ -54,7 +59,17 @@ export const CreationFormModal = () => {
   );
 };
 
-const CreationForm = () => {
+const CreationForm = ({
+  onEditContent,
+}: {
+  onEditContent: ({
+    isEmpty,
+    content,
+  }: {
+    isEmpty: boolean;
+    content: string;
+  }) => void;
+}) => {
   const { isVisiblePassword, handleCheckBox } = usePassword();
 
   return (
@@ -71,7 +86,6 @@ const CreationForm = () => {
         placeholder="4자 이상 입력해주세요"
         required
       />
-
       <div className="flex items-center mb-4 ml-1">
         <Checkbox id="terms" onCheckedChange={handleCheckBox} />
         <label
@@ -81,7 +95,6 @@ const CreationForm = () => {
           비밀번호 보기
         </label>
       </div>
-
       <div className="text-slate-400 text-xs mb-1 ml-1">카테고리</div>
 
       <Select name="category">
@@ -98,16 +111,10 @@ const CreationForm = () => {
           </SelectGroup>
         </SelectContent>
       </Select>
-
       <div className="text-slate-400 text-xs mb-1 ml-1">제목</div>
       <Input type="text" name="title" className="mb-4" required />
 
-      <Textarea
-        className="placeholder:text-slate-400 min-h-52"
-        name="content"
-        placeholder="내용을 입력해주세요"
-        required
-      />
+      <ContentEditor onEditContent={onEditContent} />
     </>
   );
 };

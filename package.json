@@ -20,6 +20,8 @@
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18",
+    "suneditor": "^2.45.1",
+    "suneditor-react": "^3.6.1",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.0"
