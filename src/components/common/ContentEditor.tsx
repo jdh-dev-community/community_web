@@ -5,6 +5,7 @@ import SunEditorCore from "suneditor/src/lib/core";
 
 const ContentEditor = ({
   onEditContent,
+  defaultValue = "",
 }: {
   onEditContent: ({
     isEmpty,
@@ -13,6 +14,7 @@ const ContentEditor = ({
     isEmpty: boolean;
     content: string;
   }) => void;
+  defaultValue?: string;
 }) => {
   const contents = useRef<SunEditorCore>();
 
@@ -43,6 +45,7 @@ const ContentEditor = ({
       }}
       getSunEditorInstance={getSunEditorInstance}
       onChange={onChange}
+      defaultValue={defaultValue}
     />
   );
 };

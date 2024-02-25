@@ -1,42 +1,65 @@
+import { Board } from "@/pages/api/postList";
+import { getParamsFromFormData } from "@/utils/common";
 import { useRouter } from "next/router";
+import { Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
 
-export const usePostManage = () => {
+export const usePostManager = (
+  data: Board & { comments: any[] },
+  setOpenUpdateDrawer: Dispatch<SetStateAction<boolean>>
+) => {
+  const [postContent, setPostContent] = useState(data);
+
   const router = useRouter();
+  const editedContent = useRef<string>("");
+  const token = useRef<string | null>(null);
 
-  const removePost = async ({
-    postId,
-    password,
-  }: {
-    postId: number;
-    password: string;
-  }) => {
-    const token = await getToken({ postId, password });
+  const handleRemove = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    await fetch(`/api/post/${postId}`, {
+    const params = getParamsFromFormData(new FormData(e.currentTarget));
+
+    await getToken({
+      postId: data.postId,
+      password: params.password,
+    });
+
+    await fetch(`/api/post/${data.postId}`, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token.current}`,
       },
     });
-
-    router.replace("/");
+    token.current = null;
+    router.reload();
   };
 
-  const updatePost = async (params: any) => {
-    const { postId, token, ...body } = params;
+  const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    const res = await fetch(`/api/post/${postId}`, {
+    if (editedContent.current.length === 0) {
+      alert("내용을 작성해 주세요");
+      return;
+    }
+
+    const params = getParamsFromFormData(new FormData(e.currentTarget));
+
+    const res = await fetch(`/api/post/${data.postId}`, {
       method: "PUT",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token.current}`,
       },
-      body: JSON.stringify({ ...body, postId }),
+      body: JSON.stringify({
+        ...params,
+        creator: data.creator,
+        postId: data.postId,
+        content: editedContent.current,
+      }),
     });
-    const { success } = await res.json();
+    const currentPost = await res.json();
 
-    if (success) {
-      router.reload();
-    }
+    token.current = null;
+    setPostContent(currentPost);
+    setOpenUpdateDrawer(false);
   };
 
   const getToken = async ({
@@ -55,9 +78,18 @@ export const usePostManage = () => {
     });
 
     const res = await response.json();
-
-    return res.token;
+    token.current = res.token;
   };
 
-  return { removePost, getToken, updatePost };
+  const onEditContent = ({
+    isEmpty,
+    content,
+  }: {
+    isEmpty: boolean;
+    content: string;
+  }) => {
+    editedContent.current = isEmpty ? "" : content;
+  };
+
+  return { postContent, handleRemove, getToken, handleUpdate, onEditContent };
 };
