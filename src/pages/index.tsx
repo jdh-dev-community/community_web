@@ -1,3 +1,4 @@
+"use-client";
 import { MainCard } from "@/components/card";
 import { Header } from "@/components/header";
 import { SortingButtons } from "@/components/home";
@@ -8,6 +9,7 @@ import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Board } from "./api/postList";
+import PostDetail from "./post/[id]";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,7 +32,10 @@ export default function Home({
   const observer = useRef<IntersectionObserver | null>(null);
   const hasMoreContent = useRef(true);
 
-  const target = useCallback(
+  const [detailData, setDetailData] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  const target: any = useCallback(
     (node: HTMLElement) => {
       if (isLoading) return;
       if (observer.current) observer.current.disconnect();
@@ -91,15 +96,24 @@ export default function Home({
     route.push("/post");
   };
 
+  const handleClick = async (id: number) => {
+    console.log("id :>> ", id);
+    const response = await fetch(`/api/post/${id}`);
+    const data = await response.json();
+    console.log("data :>> ", data);
+    setDetailData(data);
+    setOpen(true);
+  };
+
   return (
     <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
+      className={`flex min-h-screen flex-col items-center justify-between p-4 pt-20 sm:p-8 md:p-12 lg:p-24 ${inter.className}`}
       style={{ backgroundColor: "#fff" }}
     >
       <Header />
 
-      <div className="container mx-auto px-4">
-        <div className="flex justify-between">
+      <div className="container mx-auto px-2 sm:px-4">
+        <div className="flex sm:flex-row justify-between">
           <Button onClick={goRoutePost}>글 작성하기</Button>
           <SortingButtons
             currentType={listSortType}
@@ -107,24 +121,26 @@ export default function Home({
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 mt-4">
           {cards?.map((card, index) => {
             if (index === cards?.length - 1) {
               return (
                 <div key={index.toString()} ref={target}>
-                  <MainCard key={index} {...card} />
+                  <MainCard key={index} {...card} onClick={handleClick} />
                 </div>
               );
             }
 
             return (
               <div key={index.toString()}>
-                <MainCard key={index} {...card} />
+                <MainCard key={index} {...card} onClick={handleClick} />
               </div>
             );
           })}
         </div>
       </div>
+
+      {detailData !== null && <PostDetail data={detailData} isOpen={open} />}
     </main>
   );
 }

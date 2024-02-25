@@ -1,7 +1,13 @@
 import { Board } from "@/pages/api/postList";
 import { convertDateFormat } from "@/utils/dateUtils";
-import { useRouter } from "next/router";
 import React from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardTitle,
+} from "../ui/card";
 
 export const MainCard = ({
   createdAt,
@@ -11,37 +17,41 @@ export const MainCard = ({
   creator,
   category,
   viewCount,
+  onClick = () => {},
 }: Board) => {
-  const route = useRouter();
-
-  const handleClickCard = () => {
-    route.push(`/post/${postId}`);
-  };
-
   return (
-    <div
-      className="max-w-sm rounded-lg overflow-hidden shadow-lg m-4 bg-white border border-gray-200 hover:shadow-xl transition-shadow duration-300 cursor-pointer"
-      onClick={handleClickCard}
+    <Card
+      onClick={() => onClick(postId)}
+      className="flex flex-col max-w-xs h-60 sm:max-w-sm rounded-lg overflow-hidden justify-between shadow-lg m-2 bg-white border border-gray-200 hover:shadow-xl transition-shadow duration-300 cursor-pointer"
     >
-      <div className="px-6 py-4">
-        <div className="font-bold text-xl mb-2 text-gray-900">{title}</div>
-        <p className="text-gray-800 text-base mb-4">{content}</p>
+      <CardContent className="px-4 sm:px-6 py-4">
+        <CardTitle className="font-bold text-lg sm:text-xl mb-2 text-gray-900 line-clamp-1">
+          {title}
+        </CardTitle>
+        <CardDescription className="text-gray-800 text-base mb-4 line-clamp-3">
+          {content}
+        </CardDescription>
+      </CardContent>
+
+      <div className="flex flex-col pb-4">
+        <CardContent className="pb-0 max-sm:pb-2">
+          <span className="inline-block bg-blue-200 text-blue-900 rounded-full px-3 py-1 text-l">{`#${category}`}</span>
+        </CardContent>
+
+        <CardFooter
+          className="gap-2 flex flex-row items-center justify-end"
+          style={{ paddingBottom: 0 }}
+        >
+          <span className="inline-block text-gray-600 rounded-full px-1 py-1 text-xs font-semibold">{`By ${creator}`}</span>
+          {createdAt !== null && (
+            <span className="text-xs font-semibold text-gray-600">
+              {convertDateFormat(createdAt)}
+            </span>
+          )}
+          <span className="inline-block text-gray-600 rounded-full px-1 py-1 text-xs font-semibold">{`조회수 ${viewCount}`}</span>
+        </CardFooter>
       </div>
-      <div className="px-6 flex justify-between items-center">
-        <span className="inline-block bg-blue-100 text-blue-900 rounded-full px-3 py-1 text-xs font-semibold">
-          {`#${category}`}
-        </span>
-      </div>
-      <div className="px-2 pb-4 pt-2 gap-2 flex flex-row items-center justify-end">
-        <span className="inline-block text-gray-600 rounded-full px-1 py-1 text-xs font-semibold">{`By ${creator}`}</span>
-        {createdAt !== null && (
-          <span className="text-xs font-semibold text-gray-600">
-            {convertDateFormat(createdAt)}
-          </span>
-        )}
-        <span className="inline-block text-gray-600 rounded-full px-1 py-1 text-xs font-semibold">{`조회수 ${viewCount}`}</span>
-      </div>
-    </div>
+    </Card>
   );
 };
 
