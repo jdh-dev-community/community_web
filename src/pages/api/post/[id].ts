@@ -10,19 +10,19 @@ export default async function handler(
 ) {
   switch (req.method) {
     case "GET":
-      const response = await fetch(
+      const post = await fetch(
         `http://3.36.204.107/api/v1/post/${req.query.id}`
       );
 
-      res.status(200).json(await response.json());
+      res.status(200).json(await post.json());
       break;
     case "PUT":
-      const status = await updatePost(req);
+      const currentPost = await updatePost(req);
 
-      if (status === 200) {
-        res.status(200).json({ success: true });
+      if (currentPost.status === 200) {
+        res.status(200).json(await currentPost.json());
       } else {
-        res.status(500).json({ success: false });
+        // res.status(500).json({ success: false });
       }
 
       break;
@@ -67,5 +67,5 @@ const updatePost = async (req: NextApiRequest) => {
     body: JSON.stringify(body),
   });
 
-  return response.status;
+  return response;
 };

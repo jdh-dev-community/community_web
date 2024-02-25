@@ -1,7 +1,15 @@
+import { Board } from "@/pages/api/postList";
 import { useRouter } from "next/router";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 
-export const usePostManage = () => {
+export const usePostManager = (
+  data: Board & { comments: any[] },
+  setOpenUpdateDrawer: Dispatch<SetStateAction<boolean>>
+) => {
+  const [postContent, setPostContent] = useState(data);
+
   const router = useRouter();
+  const editedContent = useRef<string>("");
 
   const removePost = async ({
     postId,
@@ -19,10 +27,15 @@ export const usePostManage = () => {
       },
     });
 
-    router.replace("/");
+    router.reload();
   };
 
   const updatePost = async (params: any) => {
+    if (editedContent.current.length === 0) {
+      alert("내용을 작성해 주세요");
+      return;
+    }
+
     const { postId, token, ...body } = params;
 
     const res = await fetch(`/api/post/${postId}`, {
@@ -30,13 +43,12 @@ export const usePostManage = () => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ ...body, postId }),
+      body: JSON.stringify({ ...body, postId, content: editedContent.current }),
     });
-    const { success } = await res.json();
+    const currentPost = await res.json();
 
-    if (success) {
-      router.reload();
-    }
+    setPostContent(currentPost);
+    setOpenUpdateDrawer(false);
   };
 
   const getToken = async ({
@@ -59,5 +71,15 @@ export const usePostManage = () => {
     return res.token;
   };
 
-  return { removePost, getToken, updatePost };
+  const onEditContent = ({
+    isEmpty,
+    content,
+  }: {
+    isEmpty: boolean;
+    content: string;
+  }) => {
+    editedContent.current = isEmpty ? "" : content;
+  };
+
+  return { postContent, removePost, getToken, updatePost, onEditContent };
 };
