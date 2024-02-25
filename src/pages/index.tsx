@@ -135,7 +135,9 @@ export default function Home({
         </div>
       </div>
 
-      {detailData !== null && <PostDetail data={detailData} isOpen={open} />}
+      {detailData !== null && (
+        <PostDetail data={detailData} isOpen={open} setOpen={setOpen} />
+      )}
     </main>
   );
 }

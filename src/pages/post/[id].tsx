@@ -1,7 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { colors } from "@/styles/theme";
 import { convertDateFormat } from "@/utils/dateUtils";
-import { GetServerSideProps } from "next";
 
 import { CommentForm } from "@/components/postDetail/CommentForm";
 import { Button } from "@/components/ui/button";
@@ -22,20 +21,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { usePostManage } from "@/hooks/postDetail/usePostManage";
-import { useRouter } from "next/router";
-import { FormEvent, useRef, useState } from "react";
-import { Board } from "../api/postList";
 import { DialogPortal } from "@radix-ui/react-dialog";
-import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { useRouter } from "next/router";
+import { Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
+import { Board } from "../api/postList";
 
 export default function PostDetail({
   data,
   isOpen,
+  setOpen,
 }: {
   data: Board & { comments: any[] };
   isOpen: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
   const router = useRouter();
   const { removePost, getToken, updatePost } = usePostManage();
@@ -123,7 +124,7 @@ export default function PostDetail({
   };
 
   return (
-    <Sheet open={isOpen}>
+    <Sheet open={isOpen} onOpenChange={setOpen}>
       <SheetContent>
         <div className="min-h-screen bg-white">
           <div
@@ -357,15 +358,3 @@ export default function PostDetail({
     </Sheet>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const id = context.params?.id as string;
-  const response = await fetch(`http://3.36.204.107/api/v1/post/${id}`);
-  const data = await response.json();
-
-  return {
-    props: {
-      data,
-    },
-  };
-};
