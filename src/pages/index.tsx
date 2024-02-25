@@ -139,7 +139,7 @@ export default function Home({
         </div>
       </div>
 
-      {detailData !== null && (
+      {detailData !== null && open && (
         <PostDetail data={detailData} isOpen={open} setOpen={setOpen} />
       )}
     </main>

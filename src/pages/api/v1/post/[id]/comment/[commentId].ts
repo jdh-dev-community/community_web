@@ -10,18 +10,14 @@ export default async function handler(
 ) {
   switch (req.method) {
     case "GET":
-      const comments = await fetch(`http://3.36.204.107${req.url}`, {
+      const reCommentResponse = await fetch(`http://3.36.204.107${req.url}`, {
         method: req.method,
         headers: {
           "Content-Type": "application/json",
         },
       });
+      res.status(reCommentResponse.status).json(await reCommentResponse.json());
 
-      if (comments.status === 200) {
-        res.status(200).json(await comments.json());
-      } else {
-        res.status(comments.status).json({ success: false });
-      }
       break;
 
     case "DELETE":
@@ -34,7 +30,7 @@ export default async function handler(
       });
 
       if (response.status === 204) {
-        res.status(200).json({ success: true });
+        res.status(response.status).json({ success: true });
       } else {
         res.status(response.status).json({ success: false });
       }

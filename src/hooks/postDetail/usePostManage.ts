@@ -1,10 +1,10 @@
-import { Board } from "@/pages/api/postList";
+import { PostDetail_Response } from "@/types/api/postApi";
 import { getParamsFromFormData } from "@/utils/common";
 import { useRouter } from "next/router";
 import { Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
 
 export const usePostManager = (
-  data: Board & { comments: any[] },
+  data: PostDetail_Response,
   setOpenUpdateDrawer: Dispatch<SetStateAction<boolean>>
 ) => {
   const [postContent, setPostContent] = useState(data);
