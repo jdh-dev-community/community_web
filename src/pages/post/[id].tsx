@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import { convertDateFormat } from "@/utils/dateUtils";
 
 import { CommentForm } from "@/components/postDetail/CommentForm";
@@ -23,9 +22,9 @@ import {
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useCommentManager } from "@/hooks/postDetail/useCommentManager";
 import { usePostManager } from "@/hooks/postDetail/usePostManage";
+import { getParamsFromFormData } from "@/utils/common";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/router";
-import { Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
+import { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import { Board } from "../api/postList";
 
 const ContentEditor = dynamic(
@@ -44,97 +43,35 @@ export default function PostDetail({
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }) {
-  const [comment, setComment] = useState("");
   const [openUpdateDrawer, setOpenUpdateDrawer] = useState(false);
-  const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
+  const [openCommentDialog, setOpenCommentDialog] = useState(false);
+  const [openAuthDialog, setOpenAuthDialog] = useState(false);
 
-  const router = useRouter();
-  const { postContent, removePost, getToken, updatePost, onEditContent } =
+  const { postContent, handleRemove, getToken, handleUpdate, onEditContent } =
     usePostManager(data, setOpenUpdateDrawer);
-  const { commentList } = useCommentManager(data);
+  const { commentList, setCommentId, handleCommentSubmit } = useCommentManager(
+    data,
+    setOpenCommentDialog
+  );
 
-  const commentId = useRef<Number | null>(null);
-  const token = useRef<string | null>(null);
-
-  const handleCommentSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const requestParams = getParamsFromFormData(new FormData(e.currentTarget));
-
-    fetch("/api/comment", {
-      method: "POST",
-      body: JSON.stringify({
-        postId: data.postId,
-        content: comment,
-        ...requestParams,
-        parentId: commentId.current,
-      }),
-    }).then(async (res) => {
-      const { success } = await res.json();
-      if (success) {
-        router.reload();
-      }
-    });
-  };
-
-  const getParamsFromFormData = (formData: FormData) => {
-    let currentParams: { [key: string]: any } = {};
-
-    formData.forEach((value, index) => {
-      currentParams[index] = value;
-    });
-
-    return currentParams;
-  };
-
-  const setCommentId = (id: Number | null) => {
-    commentId.current = id;
-  };
-
-  const handleRemove = (e: FormEvent<HTMLFormElement>) => {
+  const checkUser = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const params = getParamsFromFormData(new FormData(e.currentTarget));
 
-    removePost({
+    await getToken({
       password: params.password,
       postId: data.postId,
     });
-  };
 
-  const handleUpdate = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const params = getParamsFromFormData(new FormData(e.currentTarget));
-
-    updatePost({
-      ...params,
-      postId: data.postId,
-      token: token.current,
-      creator: data.creator,
-    });
-  };
-
-  const checkUser = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const params = getParamsFromFormData(new FormData(e.currentTarget));
-
-    getToken({
-      password: params.password,
-      postId: data.postId,
-    }).then((value) => {
-      token.current = value;
-
-      setOpenUpdateDialog(false);
-      setOpenUpdateDrawer(true);
-    });
+    setOpenAuthDialog(false);
+    setOpenUpdateDrawer(true);
   };
 
   return (
     <Sheet open={isOpen} onOpenChange={setOpen}>
-      <SheetContent className="w-[400px] sm:w-[540px] sm:min-w-[1200px]">
-        <div className="h-20 flex items-center justify-center">
+      <SheetContent className="w-[800px] sm:w-[540px] sm:min-w-[1200px] overflow-auto">
+        <div className="h-20 flex items-center justify-center ">
           <h1 className="text-black text-3xl">{data.title}</h1>
         </div>
 
@@ -156,10 +93,7 @@ export default function PostDetail({
 
           <div className="flex justify-between mb-2">
             <div>
-              <Dialog
-                open={openUpdateDialog}
-                onOpenChange={setOpenUpdateDialog}
-              >
+              <Dialog open={openAuthDialog} onOpenChange={setOpenAuthDialog}>
                 <DialogTrigger asChild>
                   <Button variant="outline">수정</Button>
                 </DialogTrigger>
@@ -216,43 +150,44 @@ export default function PostDetail({
               </Dialog>
             </div>
 
-            <Dialog>
+            <Dialog
+              open={openCommentDialog}
+              onOpenChange={setOpenCommentDialog}
+            >
               <DialogTrigger asChild>
                 <Button onClick={() => setCommentId(null)}>댓글 작성</Button>
               </DialogTrigger>
               <DialogContent>
-                <CommentForm
-                  handleSubmit={handleCommentSubmit}
-                  setComment={setComment}
-                  comment={comment}
-                />
+                <CommentForm handleSubmit={handleCommentSubmit} />
               </DialogContent>
             </Dialog>
           </div>
 
-          <div className="mt-11 mb-2 text-slate-400 text-sm">댓글</div>
+          <div className="mt-11 mb-2 text-sm">댓글</div>
 
           {/* 댓글 목록 */}
           {commentList.map((content) => {
             return (
-              <Card key={content.commentId} className="p-6 mb-1">
-                <div className="flex justify-between">
-                  <div className="text-sm text-gray-500">{content.creator}</div>
-                  <div className="text-sm text-gray-500 mb-4 text-xs">
+              <div key={content.commentId} className="mb-6">
+                <div className="flex flex-row mb-2">
+                  <div className="text-xs">@</div>
+                  <div className="text-xs font-bold">{content.creator}</div>
+                  <div className="text-gray-500 text-xs ml-1">
                     {content.createdAt
                       ? convertDateFormat(content.createdAt)
                       : "알 수 없음"}
                   </div>
                 </div>
 
-                <p className="text-gray-800">{content.content}</p>
+                <p className="text-base">{content.content}</p>
 
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button
                       onClick={() => setCommentId(content.commentId)}
-                      variant="secondary"
-                      size="icon"
+                      variant="ghost"
+                      size="sm"
+                      className="text-xs font-bold"
                     >
                       답글
                     </Button>
@@ -261,8 +196,8 @@ export default function PostDetail({
                   <DialogContent>
                     <CommentForm
                       handleSubmit={handleCommentSubmit}
-                      setComment={setComment}
-                      comment={comment}
+                      // setComment={setComment}
+                      // comment={comment}
                     />
                   </DialogContent>
                 </Dialog>
@@ -287,7 +222,7 @@ export default function PostDetail({
                         </div>
                       );
                     })} */}
-              </Card>
+              </div>
             );
           })}
 
