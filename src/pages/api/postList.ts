@@ -15,10 +15,10 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Board[]>
 ) {
-  const { page, size } = req.query;
+  const { page, size, sortBy } = req.query;
 
   try {
-    const apiUrl = `http://3.36.204.107/api/v1/post/?page=${page}&size=${size}`;
+    const apiUrl = `http://3.36.204.107/api/v1/post/?page=${page}&size=${size}&sortBy=${sortBy}`;
     const response = await fetch(apiUrl);
     const data = await response.json();
 

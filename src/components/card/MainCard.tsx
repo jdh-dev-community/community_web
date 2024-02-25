@@ -8,6 +8,7 @@ import {
   CardFooter,
   CardTitle,
 } from "../ui/card";
+import { onRemoveHtmlTag } from "@/utils/baseUtils";
 
 export const MainCard = ({
   createdAt,
@@ -29,7 +30,7 @@ export const MainCard = ({
           {title}
         </CardTitle>
         <CardDescription className="text-gray-800 text-base mb-4 line-clamp-3">
-          {content}
+          {onRemoveHtmlTag(content)}
         </CardDescription>
       </CardContent>
 

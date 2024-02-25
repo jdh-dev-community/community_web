@@ -26,6 +26,7 @@ import { usePostManage } from "@/hooks/postDetail/usePostManage";
 import { useRouter } from "next/router";
 import { Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
 import { Board } from "../api/postList";
+import { onRemoveHtmlTag } from "@/utils/baseUtils";
 
 export default function PostDetail({
   data,
@@ -123,7 +124,7 @@ export default function PostDetail({
 
   return (
     <Sheet open={isOpen} onOpenChange={setOpen}>
-      <SheetContent className="w-[400px] sm:w-[540px] sm:min-w-[1200px]">
+      <SheetContent className="w-full sm:min-w-[540px] md:min-w-[700px] lg:min-w-[1000px]">
         <div className="min-h-screen bg-white">
           <div className="bg-white">
             <div className="h-20 flex items-center justify-center mt-10">
@@ -213,7 +214,9 @@ export default function PostDetail({
                   카테고리: {data.category}
                 </div>
 
-                <p className="text-gray-800 text-lg">{data.content}</p>
+                <p className="text-gray-800 text-lg">
+                  {onRemoveHtmlTag(data.content)}
+                </p>
               </div>
 
               <div className="flex justify-between mt-11 mb-2">
