@@ -26,6 +26,7 @@ import { getParamsFromFormData } from "@/utils/common";
 import dynamic from "next/dynamic";
 import { Dispatch, FormEvent, SetStateAction, useState } from "react";
 import { Board } from "../api/postList";
+import { onRemoveHtmlTag } from "@/utils/baseUtils";
 
 const ContentEditor = dynamic(
   () => import("@/components/common/ContentEditor"),
@@ -70,25 +71,35 @@ export default function PostDetail({
 
   return (
     <Sheet open={isOpen} onOpenChange={setOpen}>
-      <SheetContent className="w-[800px] sm:w-[540px] sm:min-w-[1200px] overflow-auto">
-        <div className="h-20 flex items-center justify-center ">
+      <SheetContent className="w-full sm:min-w-[540px] md:min-w-[700px] lg:min-w-[1000px]">
+        <div className="h-20 flex items-center justify-center mt-20">
           <h1 className="text-black text-3xl">{data.title}</h1>
         </div>
 
         {/* 카드 형식의 컨텐츠 */}
-        <div className="max-w-2xl mx-auto">
-          <div className="bg-gray-100 p-4 rounded-lg shadow-md mb-2">
-            <div className="text-sm text-gray-500 mb-2">
-              작성자 : {postContent.creator} | 조회수: {postContent.viewCount} |
+        <div className="max-w mx-auto  sm:p-5">
+          <div className="bg-white p-8 rounded-lg shadow-lg mb-10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-1">
+              <div className="text-base font-medium text-gray-700">
+                <span>작성자: {postContent.creator}</span>
+                <span className="mx-3">•</span>
+                <span>조회수: {postContent.viewCount}</span>
+              </div>
+
+              <div className="text-base text-gray-600">
+                작성일:{" "}
+                {postContent.createdAt
+                  ? convertDateFormat(postContent.createdAt)
+                  : "알 수 없음"}
+              </div>
+            </div>
+            <div className="text-base font-medium text-gray-700  mb-6">
               카테고리: {postContent.category}
             </div>
-            <div className="text-sm text-gray-500 mb-4">
-              작성일 :
-              {postContent.createdAt
-                ? convertDateFormat(postContent.createdAt)
-                : "알 수 없음"}
-            </div>
-            <p className="text-gray-800">{postContent.content}</p>
+
+            <p className="text-gray-800 text-lg">
+              {onRemoveHtmlTag(postContent.content)}
+            </p>
           </div>
 
           <div className="flex justify-between mb-2">
