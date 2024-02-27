@@ -33,7 +33,10 @@ export const useCommentManager = (
     const currentComments = await response.json();
 
     setComments((prev) => {
-      console.log("prev", prev);
+      if (commentNumber.current === 1) {
+        return currentComments;
+      }
+
       return {
         elementsCount: currentComments.elementsCount,
         content: [...(prev?.content ?? []), ...currentComments.content],
@@ -65,7 +68,7 @@ export const useCommentManager = (
 
         await getReComment(commentId.current);
       } else {
-        commentNumber.current = 1;
+        commentNumber.current = 0;
         await getCommentList();
       }
 
