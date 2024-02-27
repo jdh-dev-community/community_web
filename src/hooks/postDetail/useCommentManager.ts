@@ -1,30 +1,47 @@
-import { Board } from "@/pages/api/postList";
+import { BASE_COMMENT } from "@/types/api/commentApi";
 import { getParamsFromFormData } from "@/utils/common";
 import { Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
 
 export const useCommentManager = (
-  data: Board & { comments: any[] },
+  data: any,
   setOpenCommentDialog: Dispatch<SetStateAction<boolean>>
 ) => {
-  const [commentList, setCommentList] = useState(data.comments);
+  const [comments, setComments] = useState<{
+    elementsCount: number;
+    content: BASE_COMMENT[];
+  }>(data.comments);
+  const [reCommentList, setReCommentList] = useState<{
+    [key: string]: { elementsCount: number; content: BASE_COMMENT[] };
+  }>({});
 
   const commentId = useRef<number | null>(null);
-  const pageNumber = useRef<number>(1);
+  const commentNumber = useRef<number>(1);
+  const reCommentPage = useRef<{
+    [key: string]: number;
+  }>({});
   const pageSize = useRef<number>(10);
 
   const getCommentList = async () => {
-    pageNumber.current = pageNumber.current + 1;
-
+    commentNumber.current = commentNumber.current + 1;
     const response = await fetch(
-      `/api/v1/post/${data.postId}/comment?page=${pageNumber.current}&size=${pageSize.current}`,
+      `/api/v1/post/${data.postId}/comment?page=${commentNumber.current}&size=${pageSize.current}`,
       {
         method: "GET",
       }
     );
 
-    const comments = await response.json();
+    const currentComments = await response.json();
 
-    setCommentList(comments);
+    setComments((prev) => {
+      if (commentNumber.current === 1) {
+        return currentComments;
+      }
+
+      return {
+        elementsCount: currentComments.elementsCount,
+        content: [...(prev?.content ?? []), ...currentComments.content],
+      };
+    });
   };
 
   const handleCommentSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -43,9 +60,18 @@ export const useCommentManager = (
     const { success } = await res.json();
 
     if (success) {
-      pageNumber.current = 0;
+      if (commentId.current) {
+        reCommentPage.current = {
+          ...reCommentPage.current,
+          [commentId.current]: 1,
+        };
 
-      await getCommentList();
+        await getReComment(commentId.current);
+      } else {
+        commentNumber.current = 0;
+        await getCommentList();
+      }
+
       setOpenCommentDialog(false);
     }
   };
@@ -54,5 +80,40 @@ export const useCommentManager = (
     commentId.current = id;
   };
 
-  return { commentList, setCommentId, handleCommentSubmit };
+  const getReComment = async (commentId: number) => {
+    const page = reCommentPage.current[commentId] ?? 1;
+    const response = await fetch(
+      `/api/v1/post/${data.postId}/comment/${commentId}?page=${page}&size=${pageSize.current}`
+    );
+
+    const reComment = await response.json();
+
+    reCommentPage.current = {
+      ...reCommentPage.current,
+      [commentId]: (reCommentPage.current[commentId] ?? 1) + 1,
+    };
+
+    setReCommentList((prev) => {
+      if (prev[commentId] === undefined || page === 1) {
+        return { ...prev, [commentId]: reComment };
+      }
+
+      return {
+        ...prev,
+        [commentId]: {
+          content: [...prev[commentId].content, ...reComment.content],
+          elementsCount: reComment.elementsCount,
+        },
+      };
+    });
+  };
+
+  return {
+    comments,
+    reCommentList,
+    setCommentId,
+    handleCommentSubmit,
+    getReComment,
+    getCommentList,
+  };
 };

@@ -4,9 +4,7 @@ import { Header } from "@/components/header";
 import { SortingButtons } from "@/components/home";
 import { CreationFormModal } from "@/components/home/CreationFormModal";
 import { NEWEST } from "@/components/home/SortButton";
-import { GetServerSideProps } from "next";
 import { Inter } from "next/font/google";
-import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Board } from "./api/postList";
 import PostDetail from "./post/[id]";
@@ -15,22 +13,14 @@ const inter = Inter({ subsets: ["latin"] });
 
 const PAGE_SIZE = 16;
 
-export default function Home({
-  data,
-  totalElement,
-  initPageSize,
-}: {
-  data: Board[];
-  totalElement: number;
-  initPageSize: number;
-}) {
-  const firstRender = useRef(true);
-  const [cards, setCards] = useState<Board[]>(data);
+export default function Home() {
+  const [cards, setCards] = useState<Board[]>([]);
   const [isLoading, setLoading] = useState(false);
-  const [page, setPage] = useState(initPageSize);
+  const [page, setPage] = useState(1);
   const [listSortType, setListSortType] = useState(NEWEST);
   const observer = useRef<IntersectionObserver | null>(null);
   const hasMoreContent = useRef(true);
+  const totalElement = useRef(null);
 
   const [detailData, setDetailData] = useState(null);
   const [open, setOpen] = useState(false);
@@ -50,11 +40,13 @@ export default function Home({
     [isLoading]
   );
 
-  const route = useRouter();
-
   const fetchPostCards = async (currentPage: number, isReset: boolean) => {
-    if (cards?.length === totalElement && currentPage !== 2) return;
-    if (!hasMoreContent.current) return;
+    if (
+      (totalElement.current !== null &&
+        cards?.length === totalElement.current) ||
+      !hasMoreContent.current
+    )
+      return;
 
     setLoading(true);
     if (isLoading) return;
@@ -69,6 +61,7 @@ export default function Home({
       hasMoreContent.current = false;
     }
 
+    totalElement.current = newCards.elementsCount;
     if (isReset) {
       setCards(newCards?.content ?? []);
     } else {
@@ -79,11 +72,6 @@ export default function Home({
   };
 
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false;
-      return;
-    }
-
     fetchPostCards(page, page === 1);
   }, [page, listSortType]);
 
@@ -139,28 +127,9 @@ export default function Home({
         </div>
       </div>
 
-      {detailData !== null && (
+      {detailData !== null && open && (
         <PostDetail data={detailData} isOpen={open} setOpen={setOpen} />
       )}
     </main>
   );
 }
-
-export const getServerSideProps = (async () => {
-  const response = await fetch(
-    `http://3.36.204.107/api/v1/post/?page=1&size=${PAGE_SIZE}&sortBy=${NEWEST}`
-  );
-  const data = await response.json();
-
-  return {
-    props: {
-      data: data?.content ?? [],
-      totalElement: data?.elementCount ?? 0,
-      initPageSize: 1,
-    },
-  };
-}) satisfies GetServerSideProps<{
-  data: Board[];
-  totalElement: number;
-  initPageSize: number;
-}>;

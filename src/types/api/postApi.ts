@@ -1,9 +1,8 @@
-import { CATEGORY } from "./constants";
 import { BASE_COMMENT } from "./commentApi";
-import { ORDER_BY, SORT_BY } from "./constants";
+import { CATEGORY, ORDER_BY, SORT_BY } from "./constants";
 
 // 게시글 필수 속성 인터페이스
-interface BASE_POST {
+export interface BASE_POST {
   postId: number;
   title: string;
   content: string;
@@ -33,7 +32,7 @@ interface PostDetail_Request_Path {
 }
 
 // 게시글 상세 응답
-interface PostDetail_Response extends BASE_POST {
+export interface PostDetail_Response extends BASE_POST {
   comments: BASE_COMMENT[];
 }
 
