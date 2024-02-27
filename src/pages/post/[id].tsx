@@ -25,7 +25,6 @@ import { useCommentManager } from "@/hooks/postDetail/useCommentManager";
 import { usePostManager } from "@/hooks/postDetail/usePostManage";
 import { BASE_COMMENT } from "@/types/api/commentApi";
 import { PostDetail_Response } from "@/types/api/postApi";
-import { onRemoveHtmlTag } from "@/utils/baseUtils";
 import { getParamsFromFormData } from "@/utils/common";
 import dynamic from "next/dynamic";
 import { Dispatch, FormEvent, SetStateAction, useState } from "react";
@@ -54,11 +53,12 @@ export default function PostDetail({
     usePostManager(data, setOpenUpdateDrawer);
 
   const {
-    commentList,
+    comments,
     reCommentList,
     setCommentId,
     handleCommentSubmit,
     getReComment,
+    getCommentList,
   } = useCommentManager(data, setOpenCommentDialog);
 
   const checkUser = async (e: FormEvent<HTMLFormElement>) => {
@@ -103,9 +103,11 @@ export default function PostDetail({
               카테고리: {postContent.category}
             </div>
 
-            <p className="text-gray-800 text-lg">
-              {onRemoveHtmlTag(postContent.content)}
-            </p>
+            <div
+              className="text-gray-800 text-lg"
+              dangerouslySetInnerHTML={{ __html: postContent.content }}
+              suppressHydrationWarning
+            />
           </div>
 
           <div className="mb-20">
@@ -185,10 +187,12 @@ export default function PostDetail({
           </div>
           <Separator className="mb-2 mt-1" />
           {/* 댓글 목록 */}
-          {commentList.map((content) => {
+          {comments.content?.map((content) => {
             const hasReComment =
-              content.childrenCommentCount >
-              (reCommentList[content.commentId]?.length ?? 0);
+              Math.max(
+                content.childrenCommentCount,
+                reCommentList[content.commentId]?.elementsCount ?? 0
+              ) > (reCommentList[content.commentId]?.content?.length ?? 0);
 
             return (
               <div key={content.commentId} className="mb-12 mt-4">
@@ -229,7 +233,7 @@ export default function PostDetail({
                 </div>
 
                 {/* 대댓글 목록 */}
-                {reCommentList[content.commentId]?.map(
+                {reCommentList[content.commentId]?.content?.map(
                   (reply: BASE_COMMENT) => {
                     return (
                       <div key={reply.commentId} className="ml-4 my-4">
@@ -266,6 +270,19 @@ export default function PostDetail({
               </div>
             );
           })}
+
+          {comments.elementsCount > (comments.content?.length || 0) && (
+            <div>
+              <Button
+                onClick={() => getCommentList()}
+                variant="ghost"
+                size="sm"
+                className="text-xs font-bold"
+              >
+                댓글 더 보기
+              </Button>
+            </div>
+          )}
 
           <Drawer open={openUpdateDrawer} onOpenChange={setOpenUpdateDrawer}>
             <DrawerContent className="max-h-[84%]">

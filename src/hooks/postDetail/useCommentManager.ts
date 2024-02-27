@@ -1,23 +1,28 @@
 import { BASE_COMMENT } from "@/types/api/commentApi";
-import { PostDetail_Response } from "@/types/api/postApi";
 import { getParamsFromFormData } from "@/utils/common";
 import { Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
 
 export const useCommentManager = (
-  data: PostDetail_Response,
+  data: any,
   setOpenCommentDialog: Dispatch<SetStateAction<boolean>>
 ) => {
-  const [commentList, setCommentList] = useState(data.comments);
+  const [comments, setComments] = useState<{
+    elementsCount: number;
+    content: BASE_COMMENT[];
+  }>(data.comments);
   const [reCommentList, setReCommentList] = useState<{
-    [key: string]: BASE_COMMENT[];
+    [key: string]: { elementsCount: number; content: BASE_COMMENT[] };
   }>({});
 
   const commentId = useRef<number | null>(null);
   const commentNumber = useRef<number>(1);
-  const reCommentPage = useRef<number>(1);
+  const reCommentPage = useRef<{
+    [key: string]: number;
+  }>({});
   const pageSize = useRef<number>(10);
 
   const getCommentList = async () => {
+    commentNumber.current = commentNumber.current + 1;
     const response = await fetch(
       `/api/v1/post/${data.postId}/comment?page=${commentNumber.current}&size=${pageSize.current}`,
       {
@@ -25,9 +30,15 @@ export const useCommentManager = (
       }
     );
 
-    const comments = await response.json();
+    const currentComments = await response.json();
 
-    setCommentList(comments);
+    setComments((prev) => {
+      console.log("prev", prev);
+      return {
+        elementsCount: currentComments.elementsCount,
+        content: [...(prev?.content ?? []), ...currentComments.content],
+      };
+    });
   };
 
   const handleCommentSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -47,7 +58,11 @@ export const useCommentManager = (
 
     if (success) {
       if (commentId.current) {
-        reCommentPage.current = 1;
+        reCommentPage.current = {
+          ...reCommentPage.current,
+          [commentId.current]: 1,
+        };
+
         await getReComment(commentId.current);
       } else {
         commentNumber.current = 1;
@@ -63,24 +78,39 @@ export const useCommentManager = (
   };
 
   const getReComment = async (commentId: number) => {
+    const page = reCommentPage.current[commentId] ?? 1;
     const response = await fetch(
-      `/api/v1/post/${data.postId}/comment/${commentId}?page=${reCommentPage.current}&size=${pageSize.current}`
+      `/api/v1/post/${data.postId}/comment/${commentId}?page=${page}&size=${pageSize.current}`
     );
 
     const reComment = await response.json();
 
-    reCommentPage.current = reCommentPage.current + 1;
+    reCommentPage.current = {
+      ...reCommentPage.current,
+      [commentId]: (reCommentPage.current[commentId] ?? 1) + 1,
+    };
 
     setReCommentList((prev) => {
-      return { ...prev, [commentId]: reComment };
+      if (prev[commentId] === undefined || page === 1) {
+        return { ...prev, [commentId]: reComment };
+      }
+
+      return {
+        ...prev,
+        [commentId]: {
+          content: [...prev[commentId].content, ...reComment.content],
+          elementsCount: reComment.elementsCount,
+        },
+      };
     });
   };
 
   return {
-    commentList,
+    comments,
     reCommentList,
     setCommentId,
     handleCommentSubmit,
     getReComment,
+    getCommentList,
   };
 };
