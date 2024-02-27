@@ -2,7 +2,7 @@ import { BASE_COMMENT } from "./commentApi";
 import { CATEGORY, ORDER_BY, SORT_BY } from "./constants";
 
 // 게시글 필수 속성 인터페이스
-interface BASE_POST {
+export interface BASE_POST {
   postId: number;
   title: string;
   content: string;

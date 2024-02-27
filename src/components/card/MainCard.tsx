@@ -1,6 +1,5 @@
 import { Board } from "@/pages/api/postList";
 import { convertDateFormat } from "@/utils/dateUtils";
-import React from "react";
 import {
   Card,
   CardContent,
@@ -8,7 +7,6 @@ import {
   CardFooter,
   CardTitle,
 } from "../ui/card";
-import { onRemoveHtmlTag } from "@/utils/baseUtils";
 
 export const MainCard = ({
   createdAt,
@@ -30,7 +28,7 @@ export const MainCard = ({
           {title}
         </CardTitle>
         <CardDescription className="text-gray-800 text-base mb-4 line-clamp-3">
-          {onRemoveHtmlTag(content)}
+          <div dangerouslySetInnerHTML={{ __html: content }} />
         </CardDescription>
       </CardContent>
 

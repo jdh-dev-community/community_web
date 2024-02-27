@@ -1,15 +1,9 @@
+import { BASE_POST } from "@/types/api/postApi";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export type Board = {
-  category: string;
-  content: string;
-  createdAt: null | Date;
-  creator: string;
-  postId: number;
-  title: string;
-  viewCount: number;
+export interface Board extends BASE_POST {
   onClick?: (id: number) => void;
-};
+}
 
 export default async function handler(
   req: NextApiRequest,
