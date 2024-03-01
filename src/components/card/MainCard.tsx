@@ -27,9 +27,9 @@ export const MainCard = ({
         <CardTitle className="font-bold text-lg sm:text-xl mb-2 text-gray-900 line-clamp-1">
           {title}
         </CardTitle>
-        <CardDescription className="text-gray-800 text-base mb-4 line-clamp-3">
+        <CardContent className="text-gray-800 text-base mb-4 line-clamp-3">
           <div dangerouslySetInnerHTML={{ __html: content }} />
-        </CardDescription>
+        </CardContent>
       </CardContent>
 
       <div className="flex flex-col pb-4">
