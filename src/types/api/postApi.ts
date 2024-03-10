@@ -10,6 +10,7 @@ export interface BASE_POST {
   creator: string;
   viewCount: number;
   createdAt: string;
+  commentCount: number;
 }
 
 // 게시글 목록 요청

@@ -64,6 +64,7 @@ export default function Home() {
     totalElement.current = newCards.elementsCount;
     if (isReset) {
       setCards(newCards?.content ?? []);
+      setDetailData(newCards?.content?.[0] ?? null);
     } else {
       setCards((prevCards) => [...prevCards, ...(newCards?.content ?? [])]);
     }
@@ -94,42 +95,52 @@ export default function Home() {
 
   return (
     <main
-      className={`flex min-h-screen flex-col items-center justify-between p-4 pt-20 sm:p-8 md:p-12 lg:p-24 ${inter.className}`}
-      style={{ backgroundColor: "#fff" }}
+      className={`flex min-h-screen flex-col items-center justify-between sm:pt-8 md:pt-12 ${inter.className} scrollbar-hide`}
+      style={{
+        backgroundColor: "#fff",
+        maxWidth: "1920px",
+        margin: "0 auto",
+      }}
     >
       <Header />
+      <div
+        className="flex justify-center mx-auto h-screen "
+        style={{
+          maxWidth: "1920px",
+          width: "100%",
+        }}
+      >
+        <div className="flex overflow-auto scrollbar-hide mt-6 sm:mt-0">
+          <div className="container mx-auto px-2 pt-5">
+            <div className="grid grid-cols-1 gap-2 mt-10">
+              {cards?.map((card, index) => {
+                if (index === cards?.length - 1) {
+                  return (
+                    <div key={index.toString()} ref={target}>
+                      <MainCard key={index} {...card} onClick={handleClick} />
+                    </div>
+                  );
+                }
 
-      <div className="container mx-auto px-2 sm:px-4 pt-5">
-        <div className="flex sm:flex-row justify-between">
-          <CreationFormModal />
-          <SortingButtons
-            currentType={listSortType}
-            onClickButton={handleClickSortType}
-          />
+                return (
+                  <div key={index.toString()}>
+                    <MainCard key={index} {...card} onClick={handleClick} />
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 mt-4">
-          {cards?.map((card, index) => {
-            if (index === cards?.length - 1) {
-              return (
-                <div key={index.toString()} ref={target}>
-                  <MainCard key={index} {...card} onClick={handleClick} />
-                </div>
-              );
-            }
-
-            return (
-              <div key={index.toString()}>
-                <MainCard key={index} {...card} onClick={handleClick} />
-              </div>
-            );
-          })}
-        </div>
+        {detailData !== null && (
+          <div
+            className="hidden md:flex flex-grow overflow-auto scrollbar-hide mt-6 sm:mt-0"
+            style={{ flex: 1 }}
+          >
+            <PostDetail data={detailData} isOpen={true} setOpen={setOpen} />
+          </div>
+        )}
       </div>
-
-      {detailData !== null && open && (
-        <PostDetail data={detailData} isOpen={open} setOpen={setOpen} />
-      )}
     </main>
   );
 }
