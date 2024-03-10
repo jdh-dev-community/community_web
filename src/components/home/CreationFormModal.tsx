@@ -22,6 +22,7 @@ import { usePassword } from "@/hooks/post/usePassword";
 import { useSubmit } from "@/hooks/post/useSubmit";
 
 import dynamic from "next/dynamic";
+import Image from "next/image";
 
 const ContentEditor = dynamic(() => import("../common/ContentEditor"), {
   ssr: false,
@@ -33,7 +34,24 @@ export const CreationFormModal = () => {
   return (
     <Drawer>
       <DrawerTrigger asChild>
-        <Button variant="default">글 작성하기</Button>
+        <Button
+          variant="default"
+          style={{
+            backgroundColor: "#FFF",
+            padding: "8px 15px",
+            borderRadius: "50px",
+            color: "#000",
+          }}
+        >
+          <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+            글쓰기
+          </h4>
+          <Image
+            src={require("../../../assets/image/note_stack_add.png")}
+            alt="buttonImage"
+            style={{ width: "24px", height: "24px", marginLeft: "4px" }}
+          />
+        </Button>
       </DrawerTrigger>
       <DrawerContent className="max-h-[84%]">
         <form
@@ -58,6 +76,29 @@ export const CreationFormModal = () => {
     </Drawer>
   );
 };
+
+// /* feed-write-btn */
+
+// /* Auto layout */
+// display: flex;
+// flex-direction: row;
+// justify-content: center;
+// align-items: center;
+// padding: 8px 15px;
+// gap: 5px;
+
+// margin: 0 auto;
+// width: 114px;
+// height: 44px;
+
+// /* slate-50 */
+// background: #F8FAFC;
+// border-radius: 50px;
+
+// /* Inside auto layout */
+// flex: none;
+// order: 1;
+// flex-grow: 0;
 
 const CreationForm = ({
   onEditContent,
