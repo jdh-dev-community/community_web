@@ -35,7 +35,11 @@ export default function PostDetail({
     <>
       <Header />
       <div className="pt-[95px]">
-        <PostDetailComponent detail={detail} className="p-[20px]" isMobile />
+        <PostDetailComponent
+          detail={detail}
+          className="py-[10px] px-[40px]"
+          isMobile
+        />
       </div>
     </>
   );

@@ -75,6 +75,13 @@
   }
 }
 
+.custom-font-h1 {
+  font-weight: 600;
+  font-size: 48px;
+  line-height: 48px;
+  letter-spacing: -1.2%;
+}
+
 .custom-font-h2 {
   font-weight: 600;
   font-size: 30px;
@@ -122,4 +129,11 @@
   font-size: 36px;
   line-height: 36px;
   letter-spacing: -0.75%;
+}
+
+.write-button-text {
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 28px;
+  letter-spacing: 0%;
 }

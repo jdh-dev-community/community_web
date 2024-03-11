@@ -60,7 +60,7 @@ export const PostDetailComponent: FC<Props> = ({
           <DropdownMenuTrigger asChild>
             <img
               src="/assets/images/vertical_showmore.png"
-              className="w-[36px] h-[36px] lg:w-[62px] lg:h-[62px]"
+              className="w-[36px] h-[36px] lg:w-[62px] lg:h-[62px] absolute right-[-15px]"
             />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="">
@@ -75,7 +75,7 @@ export const PostDetailComponent: FC<Props> = ({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="mt-[75px]">
+      <div className="mt-[40px] lg:mt-[75px]">
         <PostCategory
           category={category}
           className={`w-[90px] lg:w-[120px] h-[30px] lg:h-[40px] ${
@@ -83,7 +83,7 @@ export const PostDetailComponent: FC<Props> = ({
           }`}
         />
       </div>
-      <div className="mt-[20px]">
+      <div className="mt-[15px] lg:mt-[20px]">
         <div
           className={`h-[56px] lg:h-[86px] w-full flex items-center  line-clamp-2 ${
             isMobile ? "custom-font-h4" : "custom-font-h2"
@@ -92,14 +92,14 @@ export const PostDetailComponent: FC<Props> = ({
           {title}
         </div>
       </div>
-      <div className="mt-[75px]">
+      <div className="mt-[40px] lg:mt-[75px]">
         <div
           className={`${isMobile ? "custom-font-subtitle" : "custom-font-p"}`}
         >
           {content}
         </div>
       </div>
-      <div className="mt-[100px]">
+      <div className="mt-[80px] lg:mt-[100px]">
         <Comments data={detail} />
       </div>
 
