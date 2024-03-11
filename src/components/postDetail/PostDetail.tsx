@@ -23,7 +23,8 @@ interface Props {
 export const PostDetailComponent: FC<Props> = ({ className = "", detail }) => {
   const { postId, creator, createdAt, category, title, content } = detail;
 
-  const [openDropDown, setOpenDropDown] = useState(false);
+  const [openUpdateSheet, setOpenUpdateSheet] = useState(false);
+  const [openDeleteSheet, setOpenDeleteSheet] = useState(false);
 
   const { postContent, handleRemove, hasAuth, handleUpdate, onEditContent } =
     usePostManager(detail);
@@ -46,30 +47,20 @@ export const PostDetailComponent: FC<Props> = ({ className = "", detail }) => {
           </div>
         </div>
 
-        <DropdownMenu open={openDropDown} onOpenChange={setOpenDropDown}>
+        <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <img
               src="/assets/images/vertical_showmore.png"
               className="w-[62px] h-[62px]"
-              onClick={() => setOpenDropDown((prev) => !prev)}
             />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="">
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => console.log("111", 111)}>
-                <UpdateFormSheet
-                  postContent={postContent}
-                  hasAuth={hasAuth}
-                  onEditContent={onEditContent}
-                  handleUpdate={handleUpdate}
-                />
+              <DropdownMenuItem onClick={() => setOpenUpdateSheet(true)}>
+                수정하기
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <DeleteFormSheet
-                  postContent={postContent}
-                  hasAuth={hasAuth}
-                  handleRemove={handleRemove}
-                />
+              <DropdownMenuItem onClick={() => setOpenDeleteSheet(true)}>
+                삭제하기
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
@@ -92,6 +83,23 @@ export const PostDetailComponent: FC<Props> = ({ className = "", detail }) => {
       <div className="mt-[100px]">
         <Comments data={detail} />
       </div>
+
+      <UpdateFormSheet
+        postContent={postContent}
+        hasAuth={hasAuth}
+        onEditContent={onEditContent}
+        handleUpdate={handleUpdate}
+        openSheet={openUpdateSheet}
+        setOpenSheet={setOpenUpdateSheet}
+      />
+
+      <DeleteFormSheet
+        postContent={postContent}
+        hasAuth={hasAuth}
+        handleRemove={handleRemove}
+        openSheet={openDeleteSheet}
+        setOpenSheet={setOpenDeleteSheet}
+      />
     </div>
   );
 };
