@@ -16,7 +16,5 @@ export default async function handler(
     },
   });
 
-  if (response.status === 201) {
-    res.status(200).json(await response.json());
-  }
+  res.status(response.status).json(await response.json());
 }

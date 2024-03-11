@@ -5,6 +5,7 @@ import SunEditorCore from "suneditor/src/lib/core";
 
 const ContentEditor = ({
   onEditContent,
+  disabled = false,
   defaultValue = "",
 }: {
   onEditContent: ({
@@ -14,6 +15,7 @@ const ContentEditor = ({
     isEmpty: boolean;
     content: string;
   }) => void;
+  disabled?: boolean;
   defaultValue?: string;
 }) => {
   const contents = useRef<SunEditorCore>();
@@ -46,6 +48,9 @@ const ContentEditor = ({
       getSunEditorInstance={getSunEditorInstance}
       onChange={onChange}
       defaultValue={defaultValue}
+      height="399"
+      placeholder="컨텐츠를 입력해주세요"
+      disable={disabled}
     />
   );
 };

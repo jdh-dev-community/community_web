@@ -1,16 +1,13 @@
 import { PostDetail_Response } from "@/types/api/postApi";
 import { getParamsFromFormData } from "@/utils/common";
 import { useRouter } from "next/router";
-import { Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 
-export const usePostManager = (
-  data: PostDetail_Response,
-  setOpenUpdateDrawer: Dispatch<SetStateAction<boolean>>
-) => {
+export const usePostManager = (data: PostDetail_Response) => {
   const [postContent, setPostContent] = useState(data);
 
   const router = useRouter();
-  const editedContent = useRef<string>("");
+  const editedContent = useRef<string>(data.content);
   const token = useRef<string | null>(null);
 
   const handleRemove = async (e: FormEvent<HTMLFormElement>) => {
@@ -18,10 +15,7 @@ export const usePostManager = (
 
     const params = getParamsFromFormData(new FormData(e.currentTarget));
 
-    await getToken({
-      postId: data.postId,
-      password: params.password,
-    });
+    await hasAuth(params.password);
 
     await fetch(`/api/post/${data.postId}`, {
       method: "DELETE",
@@ -38,7 +32,7 @@ export const usePostManager = (
 
     if (editedContent.current.length === 0) {
       alert("내용을 작성해 주세요");
-      return;
+      return false;
     }
 
     const params = getParamsFromFormData(new FormData(e.currentTarget));
@@ -55,30 +49,35 @@ export const usePostManager = (
         content: editedContent.current,
       }),
     });
-    const currentPost = await res.json();
 
-    token.current = null;
-    setPostContent(currentPost);
-    setOpenUpdateDrawer(false);
+    if (res.ok) {
+      const currentPost = await res.json();
+
+      token.current = null;
+      setPostContent(currentPost);
+    }
+
+    return res.ok;
+
+    // setOpenUpdateDrawer(false);
   };
 
-  const getToken = async ({
-    postId,
-    password,
-  }: {
-    postId: number;
-    password: string;
-  }) => {
+  const hasAuth = async (password: string) => {
     const response = await fetch("/api/post/token", {
       method: "POST",
       body: JSON.stringify({
-        postId,
+        postId: postContent.postId,
         password,
       }),
     });
 
-    const res = await response.json();
-    token.current = res.token;
+    if (response.ok) {
+      const res = await response.json();
+      console.log("res", res);
+      token.current = res.token;
+    }
+
+    return response.ok;
   };
 
   const onEditContent = ({
@@ -91,5 +90,11 @@ export const usePostManager = (
     editedContent.current = isEmpty ? "" : content;
   };
 
-  return { postContent, handleRemove, getToken, handleUpdate, onEditContent };
+  return {
+    postContent,
+    handleRemove,
+    hasAuth,
+    handleUpdate,
+    onEditContent,
+  };
 };
