@@ -14,28 +14,38 @@ import {
 import { usePassword } from "@/hooks/post/usePassword";
 
 import dynamic from "next/dynamic";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import { Sheet, SheetContent } from "../ui/sheet";
 
 import { useToast } from "@/components/ui/use-toast";
 import { PostDetail_Response } from "@/types/api/postApi";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import {
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 const ContentEditor = dynamic(() => import("../common/ContentEditor"), {
   ssr: false,
 });
 
 interface Props {
+  openSheet: boolean;
+  setOpenSheet: Dispatch<SetStateAction<boolean>>;
   postContent: PostDetail_Response;
   hasAuth: (password: string) => Promise<boolean>;
   handleRemove: (e: FormEvent<HTMLFormElement>) => void;
 }
 
 export const DeleteFormSheet = ({
+  openSheet,
+  setOpenSheet,
   postContent,
   hasAuth,
   handleRemove,
 }: Props) => {
-  const [openSheet, setOpenSheet] = useState(false);
   const [disabledEdit, setDisabledEdit] = useState(true);
 
   const { isVisiblePassword, handleCheckBox } = usePassword();
@@ -51,12 +61,6 @@ export const DeleteFormSheet = ({
 
   return (
     <Sheet open={openSheet} onOpenChange={setOpenSheet}>
-      <SheetTrigger asChild>
-        <Button variant="ghost" className="rounded-[50px] h-[24px]">
-          삭제하기
-        </Button>
-      </SheetTrigger>
-
       <SheetContent className="w-full min-w-[58%] sm:max-w-[761px] overflow-auto p-0">
         <div className="h-[88px] bg-slate-700 flex">
           <div className=" self-center text-slate-50 text-4xl font-extrabold tracking-tight mx-auto w-full max-w-[761px] pl-[20px]">
