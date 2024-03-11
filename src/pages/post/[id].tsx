@@ -1,15 +1,10 @@
 import { convertDateFormat } from "@/utils/dateUtils";
 
+import { DeleteFormSheet } from "@/components/form/DeleteFormSheet";
 import { UpdateFormSheet } from "@/components/form/UpdateFormSheet";
 import { CommentForm } from "@/components/postDetail/CommentForm";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useCommentManager } from "@/hooks/postDetail/useCommentManager";
@@ -84,34 +79,11 @@ export default function PostDetail({
               handleUpdate={handleUpdate}
             />
 
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="ml-2">
-                  삭제
-                </Button>
-              </DialogTrigger>
-
-              <DialogContent>
-                <form onSubmit={handleRemove}>
-                  <Input
-                    placeholder="비밀번호"
-                    name="password"
-                    type="text"
-                    className="mt-6"
-                    required
-                  />
-                  <DialogFooter>
-                    <Button
-                      type="submit"
-                      variant="destructive"
-                      className="mt-4"
-                    >
-                      확인
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <DeleteFormSheet
+              postContent={postContent}
+              hasAuth={hasAuth}
+              handleRemove={handleRemove}
+            />
           </div>
 
           <div className="flex justify-between">
