@@ -5,7 +5,7 @@ import { NEWEST } from "@/components/home/SortButton";
 import { Inter } from "next/font/google";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { Board } from "./api/postList";
-import { PostDetail2 } from "@/components/postDetail/PostDetail";
+import { PostDetailComponent } from "@/components/postDetail/PostDetail";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -94,7 +94,7 @@ export default function Home() {
         margin: "0 auto",
       }}
     >
-      <Header />
+      {/* <Header /> */}
       <div
         className="flex justify-center mx-auto"
         style={{
@@ -105,7 +105,7 @@ export default function Home() {
         }}
       >
         <div
-          className="flex overflow-y-scroll scrollbar-hide justify-center lg:min-w-[430px] h-[100vh] pt-[100px]"
+          className="flex overflow-y-scroll scrollbar-hide justify-center lg:min-w-[430px] h-[100vh] pt-[95px]"
           style={{ flex: 1.1 }}
         >
           <div className="grid grid-cols-1 gap-5 w-full ">
@@ -132,13 +132,15 @@ export default function Home() {
           <>
             <div className="hidden lg:flex w-[28px]" />
             <div
-              className="hidden lg:flex flex-grow overflow-y-scroll scrollbar-hide pt-[95px] pb-[15px]"
+              className="hidden lg:block h-[100vh] pt-[95px] bg-yellow-100"
               style={{ flex: 1.9 }}
             >
-              <PostDetail2
-                className="w-full rounded-lg border bg-card text-card-foreground shadow-sm p-[40px]"
-                detail={detailData}
-              />
+              <div className="h-[100%] py-0 bg-slate-300 overflow-scroll">
+                <PostDetailComponent
+                  // className="w-full rounded-lg  border bg-card text-card-foreground shadow-sm p-[40px] overflow-y-scroll scrollbar-hide"
+                  detail={detailData}
+                />
+              </div>
             </div>
           </>
         )}
@@ -146,3 +148,4 @@ export default function Home() {
     </main>
   );
 }
+// pt-[95px] pb-[15px]

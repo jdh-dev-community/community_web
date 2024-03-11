@@ -20,7 +20,7 @@ interface Props {
   detail: PostDetail;
 }
 
-export const PostDetail2: FC<Props> = ({ className = "", detail }) => {
+export const PostDetailComponent: FC<Props> = ({ className = "", detail }) => {
   const { postId, creator, createdAt, category, title, content } = detail;
 
   const handleClickShowMore = () => {
@@ -28,8 +28,8 @@ export const PostDetail2: FC<Props> = ({ className = "", detail }) => {
   };
 
   return (
-    <div className={className}>
-      <div className="w-full flex justify-between relative">
+    <>
+      <div className="w-full flex justify-between relative ">
         <div className="flex items-center">
           <Profile
             nickname={creator}
@@ -65,6 +65,6 @@ export const PostDetail2: FC<Props> = ({ className = "", detail }) => {
       <div className="mt-[100px]">
         <Comments data={detail} />
       </div>
-    </div>
+    </>
   );
 };
