@@ -94,7 +94,7 @@ export default function Home() {
         margin: "0 auto",
       }}
     >
-      {/* <Header /> */}
+      <Header />
       <div
         className="flex justify-center mx-auto"
         style={{
