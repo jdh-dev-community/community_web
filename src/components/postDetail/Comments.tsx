@@ -5,9 +5,10 @@ import { BASE_COMMENT } from "@/types/api/commentApi";
 import { getTimeDifference } from "@/utils/dateUtils";
 import { isEmpty } from "lodash";
 import { Separator } from "../ui/separator";
+import { PostDetail_Response } from "@/types/api/postApi";
 
 interface Props {
-  data: any;
+  data: PostDetail_Response;
 }
 
 export const Comments = ({ data }: Props) => {

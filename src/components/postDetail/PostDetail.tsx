@@ -13,21 +13,11 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Comments } from "./Comments";
-
-interface PostDetail {
-  postId: number;
-  title: string;
-  content: string;
-  category: string;
-  creator: string;
-  viewCount: number;
-  createdAt: string;
-  comments: [];
-}
+import { PostDetail_Response } from "@/types/api/postApi";
 
 interface Props {
   className?: string;
-  detail: PostDetail;
+  detail: PostDetail_Response;
 }
 
 export const PostDetailComponent: FC<Props> = ({ className = "", detail }) => {
