@@ -1,8 +1,8 @@
 "use-client";
 import { MainCard } from "@/components/card";
+import { CreationFormSheet } from "@/components/form/CreationFormSheet";
 import { Header } from "@/components/header";
 import { SortingButtons } from "@/components/home";
-import { CreationFormModal } from "@/components/home/CreationFormModal";
 import { NEWEST } from "@/components/home/SortButton";
 import { Inter } from "next/font/google";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -121,15 +121,19 @@ export default function Home() {
                     </div>
                   );
                 }
-
-                return (
-                  <div key={index.toString()}>
-                    <MainCard key={index} {...card} onClick={handleClick} />
-                  </div>
-                );
               })}
             </div>
           </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-2 sm:px-4 pt-5">
+        <div className="flex sm:flex-row justify-between">
+          <CreationFormSheet />
+          <SortingButtons
+            currentType={listSortType}
+            onClickButton={handleClickSortType}
+          />
         </div>
 
         {detailData !== null && (

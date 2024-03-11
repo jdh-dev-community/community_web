@@ -1,6 +1,4 @@
-import { colors } from "@/styles/theme";
-import React from "react";
-import { CreationFormModal } from "../home/CreationFormModal";
+import { CreationFormSheet } from "../form/CreationFormSheet";
 
 export const Header = () => {
   return (
@@ -23,7 +21,7 @@ export const Header = () => {
               Coconut.
             </h1>
 
-            <CreationFormModal />
+            <CreationFormSheet />
           </div>
         </nav>
       </div>
