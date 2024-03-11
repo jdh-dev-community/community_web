@@ -1,8 +1,6 @@
 "use-client";
 import { MainCard } from "@/components/card";
-import { CreationFormSheet } from "@/components/form/CreationFormSheet";
 import { Header } from "@/components/header";
-import { SortingButtons } from "@/components/home";
 import { NEWEST } from "@/components/home/SortButton";
 import { Inter } from "next/font/google";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -23,7 +21,6 @@ export default function Home() {
   const totalElement = useRef(null);
 
   const [detailData, setDetailData] = useState(null);
-  const [open, setOpen] = useState(false);
 
   const target: any = useCallback(
     (node: HTMLElement) => {
@@ -80,17 +77,11 @@ export default function Home() {
     setPage((prevPage) => prevPage + 1);
   };
 
-  const handleClickSortType = (type: string) => {
-    setListSortType(type);
-    setPage(1);
-  };
-
   const handleClick = async (id: number) => {
     const response = await fetch(`/api/post/${id}`);
     const data = await response.json();
 
     setDetailData(data);
-    setOpen(true);
   };
 
   return (
@@ -121,19 +112,15 @@ export default function Home() {
                     </div>
                   );
                 }
+
+                return (
+                  <div key={index.toString()}>
+                    <MainCard key={index} {...card} onClick={handleClick} />
+                  </div>
+                );
               })}
             </div>
           </div>
-        </div>
-      </div>
-
-      <div className="container mx-auto px-2 sm:px-4 pt-5">
-        <div className="flex sm:flex-row justify-between">
-          <CreationFormSheet />
-          <SortingButtons
-            currentType={listSortType}
-            onClickButton={handleClickSortType}
-          />
         </div>
 
         {detailData !== null && (
@@ -141,7 +128,7 @@ export default function Home() {
             className="hidden md:flex flex-grow overflow-auto scrollbar-hide mt-6 sm:mt-0"
             style={{ flex: 1 }}
           >
-            <PostDetail data={detailData} isOpen={true} setOpen={setOpen} />
+            <PostDetail data={detailData} />
           </div>
         )}
       </div>
