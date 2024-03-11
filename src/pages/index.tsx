@@ -6,6 +6,8 @@ import { Inter } from "next/font/google";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { Board } from "./api/postList";
 import { PostDetailComponent } from "@/components/postDetail/PostDetail";
+import { isMobileScreenWithException } from "@/utils/responsive";
+import { useRouter } from "next/router";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,6 +23,7 @@ export default function Home() {
   const totalElement = useRef(null);
 
   const [detailData, setDetailData] = useState(null);
+  const router = useRouter();
 
   const target: any = useCallback(
     (node: HTMLElement) => {
@@ -61,7 +64,7 @@ export default function Home() {
     totalElement.current = newCards.elementsCount;
     if (isReset) {
       setCards(newCards?.content ?? []);
-      handleClick(newCards?.content?.[0]?.postId);
+      fetchPostDetail(newCards?.content?.[0]?.postId);
     } else {
       setCards((prevCards) => [...prevCards, ...(newCards?.content ?? [])]);
     }
@@ -77,12 +80,26 @@ export default function Home() {
     setPage((prevPage) => prevPage + 1);
   };
 
-  const handleClick = async (id: number) => {
+  const fetchPostDetail = async (id: number) => {
     if (id !== null) {
       const response = await fetch(`/api/post/${id}`);
       const data = await response.json();
 
       setDetailData(data);
+    }
+  };
+
+  const handleClickCard = async (id: number) => {
+    try {
+      const isMobile = isMobileScreenWithException();
+      if (isMobile) {
+        console.log("mobile");
+        router.push(`/post/${id}`);
+      } else {
+        await fetchPostDetail(id);
+      }
+    } catch (ex) {
+      alert("다시 클릭해주세요");
     }
   };
 
@@ -113,7 +130,7 @@ export default function Home() {
               if (index === cards?.length - 1) {
                 return (
                   <div key={index.toString()} ref={target}>
-                    <MainCard key={index} {...card} onClick={handleClick} />
+                    <MainCard key={index} {...card} onClick={handleClickCard} />
                     <div className="h-[80px]" />
                   </div>
                 );
@@ -121,7 +138,7 @@ export default function Home() {
 
               return (
                 <div key={index.toString()}>
-                  <MainCard key={index} {...card} onClick={handleClick} />
+                  <MainCard key={index} {...card} onClick={handleClickCard} />
                 </div>
               );
             })}

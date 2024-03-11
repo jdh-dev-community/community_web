@@ -18,9 +18,14 @@ import { PostDetail_Response } from "@/types/api/postApi";
 interface Props {
   className?: string;
   detail: PostDetail_Response;
+  isMobile?: boolean;
 }
 
-export const PostDetailComponent: FC<Props> = ({ className = "", detail }) => {
+export const PostDetailComponent: FC<Props> = ({
+  className = "",
+  detail,
+  isMobile = false,
+}) => {
   const { postId, creator, createdAt, category, title, content } = detail;
 
   const [openUpdateSheet, setOpenUpdateSheet] = useState(false);
@@ -42,7 +47,11 @@ export const PostDetailComponent: FC<Props> = ({ className = "", detail }) => {
             imageStyle="w-[40px] h-[40px] lg:w-[60px] lg:h-[60px]"
             textStyle="custom-font-h2"
           />
-          <div className="ml-[20px] custom-font-p text-slate-500">
+          <div
+            className={`ml-[20px] text-slate-500 ${
+              isMobile ? "custom-font-additional mt-[1.5px]" : "custom-font-p"
+            }`}
+          >
             {getTimeDifference(createdAt)}
           </div>
         </div>
@@ -51,7 +60,7 @@ export const PostDetailComponent: FC<Props> = ({ className = "", detail }) => {
           <DropdownMenuTrigger asChild>
             <img
               src="/assets/images/vertical_showmore.png"
-              className="w-[62px] h-[62px]"
+              className="w-[36px] h-[36px] lg:w-[62px] lg:h-[62px]"
             />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="">
@@ -69,16 +78,26 @@ export const PostDetailComponent: FC<Props> = ({ className = "", detail }) => {
       <div className="mt-[75px]">
         <PostCategory
           category={category}
-          className="w-[120px] h-[40px] custom-font-p"
+          className={`w-[90px] lg:w-[120px] h-[30px] lg:h-[40px] ${
+            isMobile ? "custom-font-additional" : "custom-font-p"
+          }`}
         />
       </div>
       <div className="mt-[20px]">
-        <div className="h-[86px] w-full flex items-center  line-clamp-2 custom-font-h2">
+        <div
+          className={`h-[56px] lg:h-[86px] w-full flex items-center  line-clamp-2 ${
+            isMobile ? "custom-font-h4" : "custom-font-h2"
+          }`}
+        >
           {title}
         </div>
       </div>
       <div className="mt-[75px]">
-        <div className="custom-font-p">{content}</div>
+        <div
+          className={`${isMobile ? "custom-font-subtitle" : "custom-font-p"}`}
+        >
+          {content}
+        </div>
       </div>
       <div className="mt-[100px]">
         <Comments data={detail} />

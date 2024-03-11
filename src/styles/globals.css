@@ -89,10 +89,24 @@
   letter-spacing: -0.6%;
 }
 
+.custom-font-h4 {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 28px;
+  letter-spacing: -0.5%;
+}
+
 .custom-font-p {
   font-weight: 400;
   font-size: 16px;
   line-height: 28px;
+  letter-spacing: 0%;
+}
+
+.custom-font-subtitle {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
   letter-spacing: 0%;
 }
 
@@ -103,11 +117,9 @@
   letter-spacing: 0%;
 }
 
-@media (min-width: 1024px) {
-  .custom-font-h2 {
-    font-weight: 600;
-    font-size: 30px;
-    line-height: 36px;
-    letter-spacing: -0.75%;
-  }
+.logo-text-white-s {
+  font-weight: 500;
+  font-size: 36px;
+  line-height: 36px;
+  letter-spacing: -0.75%;
 }
