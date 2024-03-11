@@ -5,7 +5,7 @@ import { NEWEST } from "@/components/home/SortButton";
 import { Inter } from "next/font/google";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { Board } from "./api/postList";
-import PostDetail from "./post/[id]";
+import { PostDetail2 } from "@/components/postDetail/PostDetail";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -100,32 +100,21 @@ export default function Home() {
         style={{
           maxWidth: "1440px",
           width: "100%",
-          background: "red",
-          marginTop: "80px",
           paddingLeft: "40px",
           paddingRight: "40px",
         }}
       >
         <div
-          className="flex overflow-y-scroll scrollbar-hide justify-center min-w-[430px] h-[100vh]"
-          style={{ background: "yellowgreen", flex: 1.1 }}
+          className="flex overflow-y-scroll scrollbar-hide justify-center lg:min-w-[430px] h-[100vh] pt-[100px]"
+          style={{ flex: 1.1 }}
         >
-          <div className="grid grid-cols-1 gap-5 w-full">
+          <div className="grid grid-cols-1 gap-5 w-full ">
             {cards?.map((card, index) => {
-              if (index === 0) {
-                return (
-                  <div key={index.toString()} className="w-full h-[1px]" />
-                );
-              }
-
               if (index === cards?.length - 1) {
                 return (
-                  <div
-                    key={index.toString()}
-                    ref={target}
-                    className="w-full h-[100px]"
-                  >
+                  <div key={index.toString()} ref={target}>
                     <MainCard key={index} {...card} onClick={handleClick} />
+                    <div className="h-[80px]" />
                   </div>
                 );
               }
@@ -141,21 +130,15 @@ export default function Home() {
 
         {detailData !== null && (
           <>
-            <div className="hidden lg:flex w-[28px] bg-blue-100" />
+            <div className="hidden lg:flex w-[28px]" />
             <div
-              className="hidden lg:flex flex-grow overflow-y-scroll scrollbar-hide"
-              style={{ flex: 1.9, background: "gray" }}
+              className="hidden lg:flex flex-grow overflow-y-scroll scrollbar-hide pt-[95px] pb-[15px]"
+              style={{ flex: 1.9 }}
             >
-              <div style={{ border: 1 }}>1</div>
-              <div style={{ border: 1 }}>1</div>
-              <div style={{ border: 1 }}>1</div>
-              <div style={{ border: 1 }}>1</div>
-              <div style={{ border: 1 }}>1</div>
-              <div style={{ border: 1 }}>1</div>
-              <div style={{ border: 1 }}>1</div>
-              <div style={{ border: 1 }}>1</div>
-
-              {/* <PostDetail data={detailData} /> */}
+              <PostDetail2
+                className="w-full rounded-lg border bg-card text-card-foreground shadow-sm p-[40px]"
+                detail={detailData}
+              />
             </div>
           </>
         )}

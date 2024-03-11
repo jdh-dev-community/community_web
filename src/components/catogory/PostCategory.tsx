@@ -17,23 +17,17 @@ const CATEGORY_DEFINITION: Record<string, Record<string, string>> = {
 
 interface Props {
   category: string;
+  className?: string;
 }
 
-export const PostCategory: FC<Props> = ({ category }) => {
+export const PostCategory: FC<Props> = ({ category, className = "" }) => {
   const { word, style } = CATEGORY_DEFINITION[category.toLowerCase()];
 
   return (
-    <div className="pb-0 max-sm:pb-2">
-      <span
-        className={`inline-block bg-blue-200 rounded-full py-2 text-l ${style} flex justify-center items-center`}
-        style={{
-          width: "100px",
-          height: "30px",
-          fontSize: "12px",
-        }}
-      >
-        {word}
-      </span>
+    <div
+      className={`rounded-full flex justify-center items-center ${className} ${style}`}
+    >
+      {word}
     </div>
   );
 };

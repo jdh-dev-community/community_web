@@ -118,7 +118,10 @@ export const MainCard = ({
               {commentCount}
             </span>
           </div>
-          <PostCategory category={category} />
+          <PostCategory
+            category={category}
+            className="w-[100px] h-[30px] custom-font-additional"
+          />
         </div>
       </div>
     </Card>

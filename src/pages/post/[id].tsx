@@ -29,7 +29,6 @@ export default function PostDetail({ data }: { data: PostDetail_Response }) {
   } = useCommentManager(data, setOpenCommentDialog);
   return (
     <>
-      {" "}
       <div className="h-20 flex items-center justify-center mt-20">
         <h1 className="text-black text-3xl">{data.title}</h1>
       </div>
