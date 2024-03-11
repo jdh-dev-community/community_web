@@ -3,7 +3,7 @@ import { MainCard } from "@/components/card";
 import { Header } from "@/components/header";
 import { NEWEST } from "@/components/home/SortButton";
 import { Inter } from "next/font/google";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 import { Board } from "./api/postList";
 import PostDetail from "./post/[id]";
 
@@ -88,50 +88,76 @@ export default function Home() {
 
   return (
     <main
-      className={`flex min-h-screen flex-col items-center justify-between sm:pt-8 md:pt-12 ${inter.className} scrollbar-hide`}
+      className={`flex max-h-screen flex-col items-center justify-between ${inter.className} overflow-hidden`}
       style={{
         backgroundColor: "#fff",
-        maxWidth: "1920px",
         margin: "0 auto",
       }}
     >
       <Header />
       <div
-        className="flex justify-center mx-auto h-screen "
+        className="flex justify-center mx-auto"
         style={{
-          maxWidth: "1920px",
+          maxWidth: "1440px",
           width: "100%",
+          background: "red",
+          marginTop: "80px",
+          paddingLeft: "40px",
+          paddingRight: "40px",
         }}
       >
-        <div className="flex overflow-auto scrollbar-hide mt-6 sm:mt-0">
-          <div className="container mx-auto px-2 pt-5">
-            <div className="grid grid-cols-1 gap-2 mt-10">
-              {cards?.map((card, index) => {
-                if (index === cards?.length - 1) {
-                  return (
-                    <div key={index.toString()} ref={target}>
-                      <MainCard key={index} {...card} onClick={handleClick} />
-                    </div>
-                  );
-                }
-
+        <div
+          className="flex overflow-y-scroll scrollbar-hide justify-center min-w-[430px] h-[100vh]"
+          style={{ background: "yellowgreen", flex: 1.1 }}
+        >
+          <div className="grid grid-cols-1 gap-5 w-full">
+            {cards?.map((card, index) => {
+              if (index === 0) {
                 return (
-                  <div key={index.toString()}>
+                  <div key={index.toString()} className="w-full h-[1px]" />
+                );
+              }
+
+              if (index === cards?.length - 1) {
+                return (
+                  <div
+                    key={index.toString()}
+                    ref={target}
+                    className="w-full h-[100px]"
+                  >
                     <MainCard key={index} {...card} onClick={handleClick} />
                   </div>
                 );
-              })}
-            </div>
+              }
+
+              return (
+                <div key={index.toString()}>
+                  <MainCard key={index} {...card} onClick={handleClick} />
+                </div>
+              );
+            })}
           </div>
         </div>
 
         {detailData !== null && (
-          <div
-            className="hidden md:flex flex-grow overflow-auto scrollbar-hide mt-6 sm:mt-0"
-            style={{ flex: 1 }}
-          >
-            <PostDetail data={detailData} />
-          </div>
+          <>
+            <div className="hidden lg:flex w-[28px] bg-blue-100" />
+            <div
+              className="hidden lg:flex flex-grow overflow-y-scroll scrollbar-hide"
+              style={{ flex: 1.9, background: "gray" }}
+            >
+              <div style={{ border: 1 }}>1</div>
+              <div style={{ border: 1 }}>1</div>
+              <div style={{ border: 1 }}>1</div>
+              <div style={{ border: 1 }}>1</div>
+              <div style={{ border: 1 }}>1</div>
+              <div style={{ border: 1 }}>1</div>
+              <div style={{ border: 1 }}>1</div>
+              <div style={{ border: 1 }}>1</div>
+
+              {/* <PostDetail data={detailData} /> */}
+            </div>
+          </>
         )}
       </div>
     </main>

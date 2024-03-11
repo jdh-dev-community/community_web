@@ -9,9 +9,10 @@ export const Header = () => {
         padding: "20px 0",
         marginLeft: "auto",
         marginRight: "auto",
+        height: "80px",
       }}
     >
-      <div style={{ maxWidth: "1920px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "1440px", margin: "0 auto" }}>
         <nav>
           <div
             className="flex justify-between items-center"
