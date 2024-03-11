@@ -1,11 +1,8 @@
 import { BASE_COMMENT } from "@/types/api/commentApi";
 import { getParamsFromFormData } from "@/utils/common";
-import { Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export const useCommentManager = (
-  data: any,
-  setOpenCommentDialog: Dispatch<SetStateAction<boolean>>
-) => {
+export const useCommentManager = (data: any) => {
   const [comments, setComments] = useState<{
     elementsCount: number;
     content: BASE_COMMENT[];
@@ -14,12 +11,30 @@ export const useCommentManager = (
     [key: string]: { elementsCount: number; content: BASE_COMMENT[] };
   }>({});
 
+  const [openReCommentForm, setOpenReCommentForm] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  const [isVisibleReComment, setVisibleReComment] = useState<{
+    [key: string]: boolean;
+  }>({});
+
   const commentId = useRef<number | null>(null);
   const commentNumber = useRef<number>(1);
   const reCommentPage = useRef<{
     [key: string]: number;
   }>({});
   const pageSize = useRef<number>(10);
+
+  useEffect(() => {
+    setComments(data.comments);
+    setReCommentList({});
+    setOpenReCommentForm({});
+    setVisibleReComment({});
+    commentId.current = null;
+    commentNumber.current = 1;
+    reCommentPage.current = {};
+  }, [data]);
 
   const getCommentList = async () => {
     commentNumber.current = commentNumber.current + 1;
@@ -44,7 +59,7 @@ export const useCommentManager = (
     });
   };
 
-  const handleCommentSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleCommentSubmit = async (e: any) => {
     e.preventDefault();
 
     const requestParams = getParamsFromFormData(new FormData(e.currentTarget));
@@ -71,9 +86,9 @@ export const useCommentManager = (
         commentNumber.current = 0;
         await getCommentList();
       }
-
-      setOpenCommentDialog(false);
     }
+
+    e.target.reset();
   };
 
   const setCommentId = (id: number | null) => {
@@ -108,12 +123,36 @@ export const useCommentManager = (
     });
   };
 
+  const handleReCommentForm = (commentId: number) => {
+    setOpenReCommentForm((prev) => {
+      if (prev[commentId]) {
+        return { ...prev, [commentId]: !prev[commentId] };
+      }
+
+      return { ...prev, [commentId]: true };
+    });
+  };
+
+  const handleVisibleReComment = (commentId: number) => {
+    setVisibleReComment((prev) => {
+      if (prev[commentId]) {
+        return { ...prev, [commentId]: !prev[commentId] };
+      }
+
+      return { ...prev, [commentId]: true };
+    });
+  };
+
   return {
     comments,
     reCommentList,
+    openReCommentForm,
+    isVisibleReComment,
     setCommentId,
     handleCommentSubmit,
     getReComment,
     getCommentList,
+    handleVisibleReComment,
+    handleReCommentForm,
   };
 };

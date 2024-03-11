@@ -1,7 +1,8 @@
-import { FC } from "react";
-import { Profile } from "../profile/Profile";
 import { getTimeDifference } from "@/utils/dateUtils";
+import { FC } from "react";
 import { PostCategory } from "../catogory/PostCategory";
+import { Profile } from "../profile/Profile";
+import { Comments } from "./Comments";
 
 interface PostDetail {
   postId: number;
@@ -62,7 +63,7 @@ export const PostDetail2: FC<Props> = ({ className = "", detail }) => {
         <div className="custom-font-p">{content}</div>
       </div>
       <div className="mt-[100px]">
-        <div>댓글자리</div>
+        <Comments data={detail} />
       </div>
     </div>
   );
