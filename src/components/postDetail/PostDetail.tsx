@@ -1,7 +1,17 @@
+import { usePostManager } from "@/hooks/postDetail/usePostManage";
 import { getTimeDifference } from "@/utils/dateUtils";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { PostCategory } from "../catogory/PostCategory";
+import { DeleteFormSheet } from "../form/DeleteFormSheet";
+import { UpdateFormSheet } from "../form/UpdateFormSheet";
 import { Profile } from "../profile/Profile";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 import { Comments } from "./Comments";
 
 interface PostDetail {
@@ -23,6 +33,11 @@ interface Props {
 export const PostDetailComponent: FC<Props> = ({ className = "", detail }) => {
   const { postId, creator, createdAt, category, title, content } = detail;
 
+  const [openDropDown, setOpenDropDown] = useState(false);
+
+  const { postContent, handleRemove, hasAuth, handleUpdate, onEditContent } =
+    usePostManager(detail);
+
   const handleClickShowMore = () => {
     console.log("id: >>" + postId);
   };
@@ -41,12 +56,34 @@ export const PostDetailComponent: FC<Props> = ({ className = "", detail }) => {
           </div>
         </div>
 
-        <img
-          src="/assets/images/vertical_showmore.png"
-          width={"60px"}
-          className="absolute right-[-25px]"
-          onClick={handleClickShowMore}
-        />
+        <DropdownMenu open={openDropDown} onOpenChange={setOpenDropDown}>
+          <DropdownMenuTrigger asChild>
+            <img
+              src="/assets/images/vertical_showmore.png"
+              className="w-[62px] h-[62px]"
+              onClick={() => setOpenDropDown((prev) => !prev)}
+            />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="">
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => console.log("111", 111)}>
+                <UpdateFormSheet
+                  postContent={postContent}
+                  hasAuth={hasAuth}
+                  onEditContent={onEditContent}
+                  handleUpdate={handleUpdate}
+                />
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <DeleteFormSheet
+                  postContent={postContent}
+                  hasAuth={hasAuth}
+                  handleRemove={handleRemove}
+                />
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       <div className="mt-[75px]">
         <PostCategory

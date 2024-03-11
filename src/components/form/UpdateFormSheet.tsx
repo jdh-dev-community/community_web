@@ -56,14 +56,12 @@ export const UpdateFormSheet = ({
       setDisabledEdit(true);
     }
   }, [openSheet]);
-
+  console.log("openSheet", openSheet);
   return (
     <Sheet open={openSheet} onOpenChange={setOpenSheet}>
       <SheetTrigger asChild>
-        <Button variant="ghost" className="rounded-[50px] w-[114px] h-[44px] ">
-          <h4 className="text-slate-700 mr-[5px] text-xl font-semibold tracking-tight">
-            수정하기
-          </h4>
+        <Button variant="ghost" className="rounded-[50px] h-[24px]">
+          수정하기
         </Button>
       </SheetTrigger>
 

@@ -1,9 +1,8 @@
-import { PostDetail_Response } from "@/types/api/postApi";
 import { getParamsFromFormData } from "@/utils/common";
 import { useRouter } from "next/router";
 import { FormEvent, useRef, useState } from "react";
 
-export const usePostManager = (data: PostDetail_Response) => {
+export const usePostManager = (data: any) => {
   const [postContent, setPostContent] = useState(data);
 
   const router = useRouter();
