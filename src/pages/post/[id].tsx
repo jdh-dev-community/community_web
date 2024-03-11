@@ -5,6 +5,7 @@ import { UpdateFormSheet } from "@/components/form/UpdateFormSheet";
 import { CommentForm } from "@/components/postDetail/CommentForm";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useCommentManager } from "@/hooks/postDetail/useCommentManager";
 import { usePostManager } from "@/hooks/postDetail/usePostManage";
@@ -26,7 +27,6 @@ export default function PostDetail({ data }: { data: PostDetail_Response }) {
     getReComment,
     getCommentList,
   } = useCommentManager(data, setOpenCommentDialog);
-  console.log("comments", comments);
   return (
     <>
       {" "}
@@ -77,18 +77,40 @@ export default function PostDetail({ data }: { data: PostDetail_Response }) {
         </div>
 
         <div className="flex justify-between">
-          <div className="my-auto">댓글</div>
+          <div className="my-auto mb-0 w-[77px]">댓글</div>
+          <Input
+            className="border-0 rounded-none h-[20px] my-auto mb-0"
+            type="text"
+            name="content"
+            placeholder="이곳에 댓글을 입력해주세요"
+            required
+          />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-23 h-13 my-auto mb-0"
+            onClick={() => setCommentId(null)}
+          >
+            확인
+          </Button>
 
-          <Dialog open={openCommentDialog} onOpenChange={setOpenCommentDialog}>
-            <DialogTrigger asChild>
-              <Button onClick={() => setCommentId(null)} size="sm">
-                댓글 작성
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <CommentForm handleSubmit={handleCommentSubmit} />
-            </DialogContent>
-          </Dialog>
+          <Separator className="mb-2 mt-1" />
+          <div className="flex ml-[77px]">
+            <Input
+              className="border-0 border-b  rounded-none max-w-[35%] h-[20px] my-auto mb-0"
+              type="text"
+              name="content"
+              placeholder="닉네임"
+              required
+            />
+            <Input
+              className="flex border-0 border-b rounded-none max-w-[35%] ml-[30px] h-[20px] my-auto mb-0"
+              type="text"
+              name="content"
+              placeholder="비밀번호"
+              required
+            />
+          </div>
         </div>
         <Separator className="mb-2 mt-1" />
         {/* 댓글 목록 */}
