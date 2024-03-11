@@ -61,7 +61,7 @@ export default function Home() {
     totalElement.current = newCards.elementsCount;
     if (isReset) {
       setCards(newCards?.content ?? []);
-      setDetailData(newCards?.content?.[0] ?? null);
+      handleClick(newCards?.content?.[0]?.postId);
     } else {
       setCards((prevCards) => [...prevCards, ...(newCards?.content ?? [])]);
     }
@@ -78,10 +78,12 @@ export default function Home() {
   };
 
   const handleClick = async (id: number) => {
-    const response = await fetch(`/api/post/${id}`);
-    const data = await response.json();
+    if (id !== null) {
+      const response = await fetch(`/api/post/${id}`);
+      const data = await response.json();
 
-    setDetailData(data);
+      setDetailData(data);
+    }
   };
 
   return (

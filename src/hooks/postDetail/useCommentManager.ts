@@ -1,6 +1,13 @@
 import { BASE_COMMENT } from "@/types/api/commentApi";
 import { getParamsFromFormData } from "@/utils/common";
-import { Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
+import {
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 export const useCommentManager = (
   data: any,
@@ -20,6 +27,10 @@ export const useCommentManager = (
     [key: string]: number;
   }>({});
   const pageSize = useRef<number>(10);
+
+  useEffect(() => {
+    setComments(data.comments);
+  }, [data]);
 
   const getCommentList = async () => {
     commentNumber.current = commentNumber.current + 1;
