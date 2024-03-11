@@ -28,8 +28,8 @@ export const PostDetailComponent: FC<Props> = ({ className = "", detail }) => {
   };
 
   return (
-    <>
-      <div className="w-full flex justify-between relative ">
+    <div className={className}>
+      <div className="flex justify-between relative ">
         <div className="flex items-center">
           <Profile
             nickname={creator}
@@ -65,6 +65,6 @@ export const PostDetailComponent: FC<Props> = ({ className = "", detail }) => {
       <div className="mt-[100px]">
         <Comments data={detail} />
       </div>
-    </>
+    </div>
   );
 };

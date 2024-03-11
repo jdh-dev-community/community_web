@@ -131,15 +131,18 @@ export default function Home() {
         {detailData !== null && (
           <>
             <div className="hidden lg:flex w-[28px]" />
+
             <div
-              className="hidden lg:block h-[100vh] pt-[95px] bg-yellow-100"
+              className="hidden lg:block h-[100vh] pt-[95px]"
               style={{ flex: 1.9 }}
             >
-              <div className="h-[100%] py-0 bg-slate-300 overflow-scroll">
-                <PostDetailComponent
-                  // className="w-full rounded-lg  border bg-card text-card-foreground shadow-sm p-[40px] overflow-y-scroll scrollbar-hide"
-                  detail={detailData}
-                />
+              <div className="h-[100%] pb-[20px]">
+                <div className="h-[100%] w-full rounded-lg border bg-card text-card-foreground shadow-sm overflow-y-auto scrollbar-hide">
+                  <PostDetailComponent
+                    detail={detailData}
+                    className="p-[40px]"
+                  />
+                </div>
               </div>
             </div>
           </>
@@ -148,4 +151,3 @@ export default function Home() {
     </main>
   );
 }
-// pt-[95px] pb-[15px]
