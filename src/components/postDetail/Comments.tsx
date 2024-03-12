@@ -7,13 +7,7 @@ import { PostDetail_Response } from "@/types/api/postApi";
 import { getTimeDifference } from "@/utils/dateUtils";
 import { isEmpty } from "lodash";
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -288,21 +282,24 @@ export const Comments = ({ data }: Props) => {
       )}
 
       <Dialog open={openDeletePopup} onOpenChange={setOpenDeletePopup}>
-        <DialogContent>
+        <DialogContent className="w-[70%] rounded-[10px]">
           <DialogHeader>
-            <DialogTitle>댓글을 삭제하시겠습니까?</DialogTitle>
+            <DialogTitle className="text-sm md:text-base">
+              댓글을 삭제하시겠습니까?
+            </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleCommentRemove}>
             <Input
               placeholder="비밀번호"
               name="password"
               type="text"
-              className="mt-6"
+              className="mt-2 md:mt-6"
               required
             />
-            <DialogFooter className="mt-4">
+            <div className="mt-4 flex justify-end">
               <Button
                 variant="outline"
+                className="mr-[10px]"
                 onClick={() => setOpenDeletePopup(false)}
               >
                 취소
@@ -311,7 +308,7 @@ export const Comments = ({ data }: Props) => {
               <Button type="submit" variant="destructive">
                 삭제
               </Button>
-            </DialogFooter>
+            </div>
           </form>
         </DialogContent>
       </Dialog>
