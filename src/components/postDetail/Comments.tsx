@@ -178,7 +178,10 @@ export const Comments = ({ data }: Props) => {
                         variant="ghost"
                         size="sm"
                         className="flex-none w-23 h-13 my-auto mb-0 text-xs px-0 ml-2"
-                        onClick={() => setCommentId(content.commentId)}
+                        onClick={() => {
+                          setCommentId(content.commentId);
+                          handleVisibleReComment(content.commentId);
+                        }}
                       >
                         확인
                       </Button>
