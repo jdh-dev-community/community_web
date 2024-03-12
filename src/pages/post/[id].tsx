@@ -1,9 +1,7 @@
+import { Header } from "@/components/header";
 import { PostDetailComponent } from "@/components/postDetail/PostDetail";
 import { PostDetail_Response } from "@/types/api/postApi";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import _ from "lodash";
-import { Header } from "@/components/header";
-import { isMobileScreenWithException } from "@/utils/responsive";
 
 interface Props {
   detail: PostDetail_Response;
@@ -12,7 +10,7 @@ interface Props {
 export const getServerSideProps = (async ({ params }) => {
   if (params?.id) {
     const response = await fetch(
-      `http://3.36.204.107/api/v1/post/${params.id}`
+      `${process.env.BASE_URI}/api/v1/post/${params.id}`
     );
     const data = await response.json();
 

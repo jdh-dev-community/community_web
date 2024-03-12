@@ -16,7 +16,7 @@ export default async function handler(
 }
 
 const createPost = async (body: any) => {
-  const response = await fetch("http://3.36.204.107/api/v1/post", {
+  const response = await fetch(`${process.env.NEXT_BASE_URI}/api/v1/post`, {
     method: "POST",
     body: body,
     headers: {

@@ -6,13 +6,16 @@ export default async function handler(
 ) {
   switch (req.method) {
     case "POST": {
-      const tokenResponse = await fetch(`http://3.36.204.107${req.url}`, {
-        method: req.method,
-        body: req.body,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const tokenResponse = await fetch(
+        `${process.env.NEXT_BASE_URI}${req.url}`,
+        {
+          method: req.method,
+          body: req.body,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       res.status(tokenResponse.status).json(await tokenResponse.json());
     }
