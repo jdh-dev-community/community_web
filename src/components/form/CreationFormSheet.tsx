@@ -35,9 +35,9 @@ export const CreationFormSheet = () => {
       <SheetTrigger asChild>
         <Button
           variant="default"
-          className="rounded-[50px] bg-white w-[114px] h-[44px] hover:bg-white"
+          className="rounded-[50px] bg-white w-[114px] h-[36px] lg:h-[44px] hover:bg-white"
         >
-          <h4 className="text-slate-700 mr-[5px] text-xl font-semibold tracking-tight">
+          <h4 className="text-slate-700 mr-[5px] text-md lg:text-lg font-semibold tracking-tight">
             글쓰기
           </h4>
 
