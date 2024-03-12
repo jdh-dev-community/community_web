@@ -1,17 +1,34 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { INACTIVE, deletedComment } from "@/constants";
 import { useCommentManager } from "@/hooks/postDetail/useCommentManager";
 import { BASE_COMMENT } from "@/types/api/commentApi";
+import { PostDetail_Response } from "@/types/api/postApi";
 import { getTimeDifference } from "@/utils/dateUtils";
 import { isEmpty } from "lodash";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 import { Separator } from "../ui/separator";
-import { PostDetail_Response } from "@/types/api/postApi";
 
 interface Props {
   data: PostDetail_Response;
 }
 
 export const Comments = ({ data }: Props) => {
+  const [openDeletePopup, setOpenDeletePopup] = useState(false);
+
   const {
     comments,
     reCommentList,
@@ -23,7 +40,8 @@ export const Comments = ({ data }: Props) => {
     getCommentList,
     handleVisibleReComment,
     handleReCommentForm,
-  } = useCommentManager(data);
+    handleCommentRemove,
+  } = useCommentManager(data, setOpenDeletePopup);
 
   return (
     <div className="pb-[60px]">
@@ -83,16 +101,40 @@ export const Comments = ({ data }: Props) => {
             <div className="flex flex-row items-start">
               <div className="w-[32px] h-[32px] rounded-[50%] bg-[#B666AE] mr-[6px]" />
               <div className="w-full">
-                <div className="flex flex-row items-center h-[32px]">
-                  <div className="text-sm mr-[10px] mb-0.5">
-                    {content.creator}
+                <div className="flex justify-between items-center">
+                  <div className="flex flex-row items-center h-[32px]">
+                    <div className="text-sm mr-[10px] mb-0.5">
+                      {content.creator}
+                    </div>
+                    <div className="text-slate-500 text-xs">
+                      {getTimeDifference(content.createdAt)}
+                    </div>
                   </div>
-                  <div className="text-slate-500 text-xs">
-                    {getTimeDifference(content.createdAt)}
-                  </div>
-                </div>
 
-                <div className=" text-base text-sm">{content.content}</div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <img
+                        src="/assets/images/vertical_showmore.png"
+                        className="w-[32px] h-[32px]"
+                      />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="">
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setCommentId(content.commentId);
+                          setOpenDeletePopup(true);
+                        }}
+                      >
+                        삭제하기
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+                <div className="text-sm">
+                  {content.status === INACTIVE
+                    ? deletedComment
+                    : content.content}
+                </div>
 
                 <div className="flex items-center mb-[15px]">
                   <Button
@@ -174,16 +216,40 @@ export const Comments = ({ data }: Props) => {
                         >
                           <div className="w-[32px] h-[32px] rounded-[50%] bg-[#B666AE] mr-[6px]" />
                           <div className="w-full">
-                            <div className="flex flex-row items-center h-[32px]">
-                              <div className="text-sm mr-[10px] mb-0.5">
-                                {reply.creator}
+                            <div className="flex justify-between items-center">
+                              <div className="flex flex-row items-center h-[32px]">
+                                <div className="text-sm mr-[10px] mb-0.5">
+                                  {reply.creator}
+                                </div>
+                                <div className="text-slate-500 text-xs">
+                                  {getTimeDifference(reply.createdAt)}
+                                </div>
                               </div>
-                              <div className="text-slate-500 text-xs">
-                                {getTimeDifference(reply.createdAt)}
-                              </div>
-                            </div>
 
-                            <p className="text-base">{reply.content}</p>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <img
+                                    src="/assets/images/vertical_showmore.png"
+                                    className="w-[32px] h-[32px]"
+                                  />
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="">
+                                  <DropdownMenuItem
+                                    onClick={() => {
+                                      setCommentId(reply.commentId);
+                                      setOpenDeletePopup(true);
+                                    }}
+                                  >
+                                    삭제하기
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                            <p className="text-sm">
+                              {reply.status === INACTIVE
+                                ? deletedComment
+                                : reply.content}
+                            </p>
                           </div>
                         </div>
                       );
@@ -217,6 +283,35 @@ export const Comments = ({ data }: Props) => {
           댓글 더보기
         </Button>
       )}
+
+      <Dialog open={openDeletePopup} onOpenChange={setOpenDeletePopup}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>댓글을 삭제하시겠습니까?</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleCommentRemove}>
+            <Input
+              placeholder="비밀번호"
+              name="password"
+              type="text"
+              className="mt-6"
+              required
+            />
+            <DialogFooter className="mt-4">
+              <Button
+                variant="outline"
+                onClick={() => setOpenDeletePopup(false)}
+              >
+                취소
+              </Button>
+
+              <Button type="submit" variant="destructive">
+                삭제
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

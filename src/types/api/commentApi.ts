@@ -7,6 +7,7 @@ export interface BASE_COMMENT {
   createdAt: string;
   postId: number;
   childrenCommentCount: number;
+  status: string;
 }
 
 // 댓글 생성 요청
