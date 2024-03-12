@@ -8,6 +8,7 @@ import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Board } from "./api/postList";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,6 +23,7 @@ export default function Home() {
   const hasMoreContent = useRef(true);
   const totalElement = useRef(null);
   const clickedPostId = useRef<null | number>(null);
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
 
   const [detailData, setDetailData] = useState(null);
   const router = useRouter();
@@ -102,7 +104,9 @@ export default function Home() {
       if (isMobile) {
         router.push(`/post/${id}`);
       } else {
+        setIsLoadingDetail(true);
         await fetchPostDetail(id);
+        setIsLoadingDetail(false);
       }
     } catch (ex) {
       alert("다시 클릭해주세요");
@@ -159,13 +163,18 @@ export default function Home() {
               className="hidden lg:block h-[100vh] pt-[95px]"
               style={{ flex: 1.9 }}
             >
-              <div className="h-[100%] pb-[20px]">
+              <div className="h-[100%] pb-[20px] relative">
                 <div className="h-[100%] w-full rounded-lg border bg-card text-card-foreground shadow-sm overflow-y-auto scrollbar-hide">
                   <PostDetailComponent
                     detail={detailData}
                     className="p-[40px]"
                   />
                 </div>
+                {isLoadingDetail && (
+                  <div className="hidden lg:block absolute top-[50%] left-[50%]">
+                    <ClipLoader size={50} />
+                  </div>
+                )}
               </div>
             </div>
           </>
