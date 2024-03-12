@@ -19,9 +19,9 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 
+import { POST_CATEGORY_DEF } from "@/constants/posts";
 import { useState } from "react";
 import noteAdd from "../../../assets/images/noteAdd@x3.png";
-import { POST_CATEGORY_DEF } from "@/constants/posts";
 
 const ContentEditor = dynamic(() => import("../common/ContentEditor"), {
   ssr: false,
@@ -56,7 +56,7 @@ export const CreationFormSheet = () => {
 
         <form
           onSubmit={onSubmit}
-          className="p-[20px] pt-[20px] overflow-auto mx-auto w-full max-w-[761px]"
+          className="p-[20px] pt-[20px] overflow-auto mx-auto w-full max-w-[761px] overflow-x-hidden"
         >
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
             피드 작성하기
