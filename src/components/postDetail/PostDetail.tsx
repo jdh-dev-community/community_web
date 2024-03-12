@@ -34,10 +34,6 @@ export const PostDetailComponent: FC<Props> = ({
   const { postContent, handleRemove, hasAuth, handleUpdate, onEditContent } =
     usePostManager(detail);
 
-  const handleClickShowMore = () => {
-    console.log("id: >>" + postId);
-  };
-
   return (
     <div className={className}>
       <div className="flex justify-between relative ">

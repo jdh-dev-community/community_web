@@ -1,4 +1,5 @@
 import { getParamsFromFormData } from "@/utils/common";
+import { isMobileScreenWithException } from "@/utils/responsive";
 import { useRouter } from "next/router";
 import { FormEvent, useRef, useState } from "react";
 
@@ -23,7 +24,13 @@ export const usePostManager = (data: any) => {
       },
     });
     token.current = null;
-    router.reload();
+
+    const isMobile = isMobileScreenWithException();
+    if (isMobile) {
+      router.push("/");
+    } else {
+      router.reload();
+    }
   };
 
   const handleUpdate = async (e: FormEvent<HTMLFormElement>) => {
