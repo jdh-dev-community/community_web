@@ -40,7 +40,9 @@ export const useSubmit = () => {
 
   const handleSuccessPost = () => {
     const isMobile = isMobileScreenWithException();
-    if (isMobile) {
+    const isHome = router.pathname === "/";
+
+    if (isMobile && !isHome) {
       router.push("/");
     } else {
       router.reload();
