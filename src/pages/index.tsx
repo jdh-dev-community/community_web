@@ -2,12 +2,12 @@
 import { MainCard } from "@/components/card";
 import { Header } from "@/components/header";
 import { NEWEST } from "@/components/home/SortButton";
-import { Inter } from "next/font/google";
-import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
-import { Board } from "./api/postList";
 import { PostDetailComponent } from "@/components/postDetail/PostDetail";
 import { isMobileScreenWithException } from "@/utils/responsive";
+import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Board } from "./api/postList";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -127,7 +127,7 @@ export default function Home() {
         >
           <div className="grid grid-cols-1 gap-5 w-full ">
             {cards?.map((card, index) => {
-              if (index === cards?.length - 1) {
+              if (index === cards?.length - 2) {
                 return (
                   <div key={index.toString()} ref={target}>
                     <MainCard key={index} {...card} onClick={handleClickCard} />
