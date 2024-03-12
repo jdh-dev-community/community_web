@@ -1,4 +1,5 @@
 import { usePostManager } from "@/hooks/postDetail/usePostManage";
+import { PostDetail_Response } from "@/types/api/postApi";
 import { getTimeDifference } from "@/utils/dateUtils";
 import { FC, useState } from "react";
 import { PostCategory } from "../catogory/PostCategory";
@@ -13,7 +14,6 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Comments } from "./Comments";
-import { PostDetail_Response } from "@/types/api/postApi";
 
 interface Props {
   className?: string;
@@ -26,13 +26,13 @@ export const PostDetailComponent: FC<Props> = ({
   detail,
   isMobile = false,
 }) => {
-  const { postId, creator, createdAt, category, title, content } = detail;
-
   const [openUpdateSheet, setOpenUpdateSheet] = useState(false);
   const [openDeleteSheet, setOpenDeleteSheet] = useState(false);
 
   const { postContent, handleRemove, hasAuth, handleUpdate, onEditContent } =
     usePostManager(detail);
+
+  const { postId, creator, createdAt, category, title, content } = postContent;
 
   const handleClickShowMore = () => {
     console.log("id: >>" + postId);
