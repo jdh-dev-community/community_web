@@ -2,7 +2,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { INACTIVE, invalidPassword } from "@/constants";
 import { BASE_COMMENT } from "@/types/api/commentApi";
 import { getParamsFromFormData } from "@/utils/common";
-import { findIndex, mapValues } from "lodash";
+import { find, findIndex, mapValues } from "lodash";
 import {
   Dispatch,
   FormEvent,
@@ -184,6 +184,7 @@ export const useCommentManager = (
         }
       );
       const { success } = await res.json();
+
       if (success) {
         updateCommentList();
         setOpenDeletePopup(false);
@@ -199,21 +200,37 @@ export const useCommentManager = (
 
   const updateCommentList = () => {
     const isComment =
-      findIndex(
-        comments.content,
-        (value) => value.commentId === commentId.current
-      ) > 0;
+      findIndex(comments.content, (value) => {
+        return value.commentId === commentId.current;
+      }) >= 0;
 
     if (isComment) {
-      setComments((prev) => ({
-        ...prev,
-        content: prev.content.map((value) => {
-          if (value.commentId === commentId.current) {
-            return { ...value, status: INACTIVE };
-          }
-          return value;
-        }),
-      }));
+      setComments((prev) => {
+        const comment = find(
+          prev.content,
+          (value) => value.commentId === commentId.current
+        );
+        const hasReComment = comment!.childrenCommentCount > 0;
+
+        if (hasReComment) {
+          return {
+            ...prev,
+            content: prev.content.map((value) => {
+              if (value.commentId === commentId.current) {
+                return { ...value, status: INACTIVE };
+              }
+              return value;
+            }),
+          };
+        }
+
+        return {
+          ...prev,
+          content: prev.content.filter((value) => {
+            return value.commentId !== commentId.current;
+          }),
+        };
+      });
     } else {
       setReCommentList((prev) => {
         return mapValues(prev, (item) => ({
