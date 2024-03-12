@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 
 import { usePassword } from "@/hooks/post/usePassword";
+import _ from "lodash";
 
 import dynamic from "next/dynamic";
 import { Sheet, SheetContent } from "../ui/sheet";
@@ -26,6 +27,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { POST_CATEGORY_DEF } from "@/constants/posts";
 
 const ContentEditor = dynamic(() => import("../common/ContentEditor"), {
   ssr: false,
@@ -112,9 +114,15 @@ export const UpdateFormSheet = ({
             <SelectContent>
               <SelectGroup>
                 <SelectLabel>카테고리</SelectLabel>
-                <SelectItem value="ad">홍보</SelectItem>
-                <SelectItem value="question">질문</SelectItem>
-                <SelectItem value="consulting">상담</SelectItem>
+                {[
+                  _.entries(POST_CATEGORY_DEF).map(([key, value]) => {
+                    return (
+                      <SelectItem key={key} value={key}>
+                        {value.word}
+                      </SelectItem>
+                    );
+                  }),
+                ]}
               </SelectGroup>
             </SelectContent>
           </Select>
