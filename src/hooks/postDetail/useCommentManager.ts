@@ -2,7 +2,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { INACTIVE, invalidPassword } from "@/constants";
 import { BASE_COMMENT } from "@/types/api/commentApi";
 import { getParamsFromFormData } from "@/utils/common";
-import { findIndex, mapValues } from "lodash";
+import { find, findIndex, mapValues } from "lodash";
 import {
   Dispatch,
   FormEvent,
@@ -38,6 +38,7 @@ export const useCommentManager = (
     [key: string]: number;
   }>({});
   const pageSize = useRef<number>(10);
+  const isFetching = useRef<boolean>(false);
 
   const { toast } = useToast();
 
@@ -75,35 +76,41 @@ export const useCommentManager = (
   };
 
   const handleCommentSubmit = async (e: any) => {
-    e.preventDefault();
+    if (!isFetching.current) {
+      isFetching.current = true;
+      e.preventDefault();
 
-    const requestParams = getParamsFromFormData(new FormData(e.currentTarget));
+      const requestParams = getParamsFromFormData(
+        new FormData(e.currentTarget)
+      );
 
-    const res = await fetch(`/api/v1/post/${data.postId}/comment`, {
-      method: "POST",
-      body: JSON.stringify({
-        ...requestParams,
-        parentId: commentId.current,
-      }),
-    });
+      const res = await fetch(`/api/v1/post/${data.postId}/comment`, {
+        method: "POST",
+        body: JSON.stringify({
+          ...requestParams,
+          parentId: commentId.current,
+        }),
+      });
 
-    const { success } = await res.json();
+      const { success } = await res.json();
 
-    if (success) {
-      if (commentId.current) {
-        reCommentPage.current = {
-          ...reCommentPage.current,
-          [commentId.current]: 1,
-        };
+      if (success) {
+        if (commentId.current) {
+          reCommentPage.current = {
+            ...reCommentPage.current,
+            [commentId.current]: 1,
+          };
 
-        await getReComment(commentId.current);
-      } else {
-        commentNumber.current = 0;
-        await getCommentList();
+          await getReComment(commentId.current);
+        } else {
+          commentNumber.current = 0;
+          await getCommentList();
+        }
       }
-    }
 
-    e.target.reset();
+      e.target.reset();
+      isFetching.current = false;
+    }
   };
 
   const setCommentId = (id: number | null) => {
@@ -184,6 +191,7 @@ export const useCommentManager = (
         }
       );
       const { success } = await res.json();
+
       if (success) {
         updateCommentList();
         setOpenDeletePopup(false);
@@ -199,21 +207,37 @@ export const useCommentManager = (
 
   const updateCommentList = () => {
     const isComment =
-      findIndex(
-        comments.content,
-        (value) => value.commentId === commentId.current
-      ) > 0;
+      findIndex(comments.content, (value) => {
+        return value.commentId === commentId.current;
+      }) >= 0;
 
     if (isComment) {
-      setComments((prev) => ({
-        ...prev,
-        content: prev.content.map((value) => {
-          if (value.commentId === commentId.current) {
-            return { ...value, status: INACTIVE };
-          }
-          return value;
-        }),
-      }));
+      setComments((prev) => {
+        const comment = find(
+          prev.content,
+          (value) => value.commentId === commentId.current
+        );
+        const hasReComment = comment!.childrenCommentCount > 0;
+
+        if (hasReComment) {
+          return {
+            ...prev,
+            content: prev.content.map((value) => {
+              if (value.commentId === commentId.current) {
+                return { ...value, status: INACTIVE };
+              }
+              return value;
+            }),
+          };
+        }
+
+        return {
+          ...prev,
+          content: prev.content.filter((value) => {
+            return value.commentId !== commentId.current;
+          }),
+        };
+      });
     } else {
       setReCommentList((prev) => {
         return mapValues(prev, (item) => ({
