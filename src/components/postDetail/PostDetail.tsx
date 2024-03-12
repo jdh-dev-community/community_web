@@ -91,9 +91,8 @@ export const PostDetailComponent: FC<Props> = ({
       <div className="mt-[40px] lg:mt-[75px]">
         <div
           className={`${isMobile ? "custom-font-subtitle" : "custom-font-p"}`}
-        >
-          {content}
-        </div>
+          dangerouslySetInnerHTML={{ __html: content }}
+        />
       </div>
       <div className="mt-[80px] lg:mt-[100px]">
         <Comments data={detail} />
