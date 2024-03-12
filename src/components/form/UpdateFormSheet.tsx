@@ -18,6 +18,7 @@ import dynamic from "next/dynamic";
 import { Sheet, SheetContent } from "../ui/sheet";
 
 import { useToast } from "@/components/ui/use-toast";
+import { POST_CATEGORY_DEF } from "@/constants/posts";
 import { PostDetail_Response } from "@/types/api/postApi";
 import {
   Dispatch,
@@ -27,7 +28,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { POST_CATEGORY_DEF } from "@/constants/posts";
 
 const ContentEditor = dynamic(() => import("../common/ContentEditor"), {
   ssr: false,
@@ -92,7 +92,7 @@ export const UpdateFormSheet = ({
               setOpenSheet(false);
             }
           }}
-          className="p-[20px] pt-[20px] overflow-auto mx-auto w-full max-w-[761px]"
+          className="p-[20px] pt-[20px] overflow-auto mx-auto w-full max-w-[761px] overflow-x-hidden"
         >
           <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
             피드 수정하기
