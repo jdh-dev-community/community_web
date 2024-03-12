@@ -36,7 +36,7 @@ export const PostDetailComponent: FC<Props> = ({
 
   return (
     <div className={className}>
-      <div className="flex justify-between relative ">
+      <div className="flex justify-between relative">
         <div className="flex items-center">
           <Profile
             nickname={creator}
@@ -56,7 +56,7 @@ export const PostDetailComponent: FC<Props> = ({
           <DropdownMenuTrigger asChild>
             <img
               src="/assets/images/vertical_showmore.png"
-              className="w-[36px] h-[36px] lg:w-[62px] lg:h-[62px] absolute right-[-15px]"
+              className="w-[36px] h-[36px] lg:w-[48px] lg:h-[48px] absolute right-[-18px] cursor-pointer "
             />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="">
