@@ -3,6 +3,7 @@ import { PostDetail_Response } from "@/types/api/postApi";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import _ from "lodash";
 import { Header } from "@/components/header";
+import { isMobileScreenWithException } from "@/utils/responsive";
 
 interface Props {
   detail: PostDetail_Response;

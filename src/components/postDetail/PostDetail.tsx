@@ -41,7 +41,7 @@ export const PostDetailComponent: FC<Props> = ({
           <Profile
             nickname={creator}
             imageStyle="w-[40px] h-[40px] lg:w-[60px] lg:h-[60px]"
-            textStyle="custom-font-h2"
+            textStyle={isMobile ? "custom-font-p" : "custom-font-h4"}
           />
           <div
             className={`ml-[20px] text-slate-500 ${
