@@ -1,6 +1,6 @@
 import { getParamsFromFormData } from "@/utils/common";
 import { useRouter } from "next/router";
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 
 export const usePostManager = (data: any) => {
   const [postContent, setPostContent] = useState(data);
@@ -8,6 +8,12 @@ export const usePostManager = (data: any) => {
   const router = useRouter();
   const editedContent = useRef<string>(data.content);
   const token = useRef<string | null>(null);
+
+  useEffect(() => {
+    setPostContent(data);
+    editedContent.current = data.content;
+    token.current = null;
+  }, [data]);
 
   const handleRemove = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
