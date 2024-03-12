@@ -21,6 +21,7 @@ export default function Home() {
   const observer = useRef<IntersectionObserver | null>(null);
   const hasMoreContent = useRef(true);
   const totalElement = useRef(null);
+  const clickedPostId = useRef<null | number>(null);
 
   const [detailData, setDetailData] = useState(null);
   const router = useRouter();
@@ -90,10 +91,15 @@ export default function Home() {
   };
 
   const handleClickCard = async (id: number) => {
+    if (clickedPostId.current === id) {
+      return;
+    }
+
+    clickedPostId.current = id;
+
     try {
       const isMobile = isMobileScreenWithException();
       if (isMobile) {
-        console.log("mobile");
         router.push(`/post/${id}`);
       } else {
         await fetchPostDetail(id);
