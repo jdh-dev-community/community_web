@@ -22,6 +22,7 @@ import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { useState } from "react";
 import noteAdd from "../../../assets/images/noteAdd@x3.png";
 import { POST_CATEGORY_DEF } from "@/constants/posts";
+import { TextLogo } from "../parts/TextLogo";
 
 const ContentEditor = dynamic(() => import("../common/ContentEditor"), {
   ssr: false,
@@ -48,11 +49,7 @@ export const CreationFormSheet = () => {
       </SheetTrigger>
 
       <SheetContent className="w-full min-w-[58%] sm:max-w-[761px] overflow-auto p-0">
-        <div className="h-[88px] bg-slate-700 flex">
-          <div className=" self-center text-slate-50 text-4xl font-extrabold tracking-tight mx-auto w-full max-w-[761px] pl-[20px]">
-            Coconut
-          </div>
-        </div>
+        <TextLogo containerStyle="max-w-[761px] pl-[20px]" />
 
         <form
           onSubmit={onSubmit}
