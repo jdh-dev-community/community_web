@@ -38,6 +38,7 @@ export const useCommentManager = (
     [key: string]: number;
   }>({});
   const pageSize = useRef<number>(10);
+  const isFetching = useRef<boolean>(false);
 
   const { toast } = useToast();
 
@@ -75,35 +76,41 @@ export const useCommentManager = (
   };
 
   const handleCommentSubmit = async (e: any) => {
-    e.preventDefault();
+    if (!isFetching.current) {
+      isFetching.current = true;
+      e.preventDefault();
 
-    const requestParams = getParamsFromFormData(new FormData(e.currentTarget));
+      const requestParams = getParamsFromFormData(
+        new FormData(e.currentTarget)
+      );
 
-    const res = await fetch(`/api/v1/post/${data.postId}/comment`, {
-      method: "POST",
-      body: JSON.stringify({
-        ...requestParams,
-        parentId: commentId.current,
-      }),
-    });
+      const res = await fetch(`/api/v1/post/${data.postId}/comment`, {
+        method: "POST",
+        body: JSON.stringify({
+          ...requestParams,
+          parentId: commentId.current,
+        }),
+      });
 
-    const { success } = await res.json();
+      const { success } = await res.json();
 
-    if (success) {
-      if (commentId.current) {
-        reCommentPage.current = {
-          ...reCommentPage.current,
-          [commentId.current]: 1,
-        };
+      if (success) {
+        if (commentId.current) {
+          reCommentPage.current = {
+            ...reCommentPage.current,
+            [commentId.current]: 1,
+          };
 
-        await getReComment(commentId.current);
-      } else {
-        commentNumber.current = 0;
-        await getCommentList();
+          await getReComment(commentId.current);
+        } else {
+          commentNumber.current = 0;
+          await getCommentList();
+        }
       }
-    }
 
-    e.target.reset();
+      e.target.reset();
+      isFetching.current = false;
+    }
   };
 
   const setCommentId = (id: number | null) => {
