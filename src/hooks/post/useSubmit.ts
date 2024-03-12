@@ -1,3 +1,4 @@
+import { isMobileScreenWithException } from "@/utils/responsive";
 import { useRouter } from "next/router";
 import { FormEvent, useRef } from "react";
 
@@ -15,7 +16,14 @@ export const useSubmit = () => {
 
     const formData = new FormData(event.currentTarget);
 
-    createPost(formData);
+    const isSuccess = await createPost(formData);
+
+    if (isSuccess) {
+      handleSuccessPost();
+    } else {
+      // 팝업 UI 변경
+      alert("글 작성 실패");
+    }
   };
 
   const createPost = async (formData: FormData) => {
@@ -27,12 +35,15 @@ export const useSubmit = () => {
     });
 
     const { result } = await res.json();
+    return result !== null;
+  };
 
-    if (result !== null) {
-      router.reload();
+  const handleSuccessPost = () => {
+    const isMobile = isMobileScreenWithException();
+    if (isMobile) {
+      router.push("/");
     } else {
-      // 팝업 UI 변경
-      alert("글 작성 실패");
+      router.reload();
     }
   };
 
