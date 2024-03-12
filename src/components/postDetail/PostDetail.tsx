@@ -2,7 +2,7 @@ import { usePostManager } from "@/hooks/postDetail/usePostManage";
 import { PostDetail_Response } from "@/types/api/postApi";
 import { getTimeDifference } from "@/utils/dateUtils";
 import { FC, useState } from "react";
-import { PostCategory } from "../catogory/PostCategory";
+import { PostCategory } from "../parts/PostCategory";
 import { DeleteFormSheet } from "../form/DeleteFormSheet";
 import { UpdateFormSheet } from "../form/UpdateFormSheet";
 import { Profile } from "../profile/Profile";

@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import Image from "next/image";
-import { PostCategory } from "../catogory/PostCategory";
+import { PostCategory } from "../parts/PostCategory";
 
 export const MainCard = ({
   createdAt,
