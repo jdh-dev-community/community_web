@@ -136,20 +136,15 @@ export default function Home() {
           className="flex overflow-y-scroll scrollbar-hide justify-center lg:min-w-[430px] h-[100vh] pt-[95px]"
           style={{ flex: 1.1 }}
         >
-          <div className="grid grid-cols-1 gap-5 w-full ">
+          <div className="flex flex-col w-[99%]">
             {cards?.map((card, index) => {
-              if (index === cards?.length - 2) {
-                return (
-                  <div key={index.toString()} ref={target}>
-                    <MainCard key={index} {...card} onClick={handleClickCard} />
-                    <div className="h-[80px]" />
-                  </div>
-                );
-              }
+              const isLast = index === cards?.length - 1;
+              const trigger = index === cards?.length - 2 ? target : null;
 
               return (
-                <div key={index.toString()}>
+                <div key={index.toString()} ref={trigger}>
                   <MainCard key={index} {...card} onClick={handleClickCard} />
+                  <div className={`${isLast ? "h-[80px]" : "h-[20px]"}`} />
                 </div>
               );
             })}
