@@ -8,8 +8,11 @@ export const convertDateFormat = (date: string): string => {
   return formattedDate;
 };
 
+const KOREA_TIME_OFFSET = 9 * 60 * 60 * 1000;
 export const getTimeDifference = (givenDateString: string) => {
-  const givenDate = new Date(givenDateString).getTime();
+  const koreaTime = new Date(givenDateString).getTime() + KOREA_TIME_OFFSET;
+
+  const givenDate = new Date(koreaTime).getTime();
   const currentDate = new Date().getTime();
 
   // 주어진 날짜와 현재 날짜의 차이(밀리초 단위)
