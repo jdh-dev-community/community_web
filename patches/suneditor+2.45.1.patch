@@ -28,19 +28,10 @@ index 8c5fe9f..8986b81 100644
       * @param listener Event listener
       */
 diff --git a/node_modules/suneditor/src/lib/core.js b/node_modules/suneditor/src/lib/core.js
-index 0fb8b2e..2facd41 100755
+index 0fb8b2e..a085530 100755
 --- a/node_modules/suneditor/src/lib/core.js
 +++ b/node_modules/suneditor/src/lib/core.js
-@@ -10,8 +10,6 @@
- import _Constructor from './constructor';
- import _Context from './context';
- import _history from './history';
--import _util from './util';
--import _notice from '../plugins/modules/_notice';
- 
- /**
-  * @description SunEditor constuctor function.
-@@ -1162,10 +1160,10 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
+@@ -1162,10 +1162,10 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
           * @returns {Node}
           */
          getSelectionNode: function () {
@@ -53,7 +44,7 @@ index 0fb8b2e..2facd41 100755
                      this._editorRange();
                  } else {
                      this._variable._selectionNode = selectionNode;
-@@ -5659,7 +5657,7 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
+@@ -5659,7 +5659,7 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
  
          /**
           * @description Remove events from document.
