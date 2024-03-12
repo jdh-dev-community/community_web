@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import Image from "next/image";
+import { PostCategory } from "../catogory/PostCategory";
 
 export const MainCard = ({
   createdAt,
@@ -24,13 +25,13 @@ export const MainCard = ({
   return (
     <Card
       onClick={() => onClick(postId)}
-      className="flex flex-col max-w-xs h-60 sm:max-w-sm rounded-lg overflow-hidden justify-between shadow-lg m-2 bg-white border border-gray-200 hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+      className="flex flex-col h-[295px] rounded-lg overflow-hidden justify-between shadow-lg  bg-white border border-gray-200 hover:shadow-xl transition-shadow duration-300 cursor-pointer"
       style={{
         background: "#FFFFFF",
         boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
         borderRadius: "12px",
         padding: "20px",
-        width: "487px",
+        width: "100%",
       }}
     >
       <div
@@ -73,7 +74,7 @@ export const MainCard = ({
       </div>
 
       <div className="py-4">
-        <div className="mb-[15px] line-clamp-1">
+        <div className="h-[56px] mb-[15px] line-clamp-2">
           <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
             {title}
           </h4>
@@ -117,20 +118,10 @@ export const MainCard = ({
               {commentCount}
             </span>
           </div>
-          <div className="pb-0 max-sm:pb-2">
-            <span
-              className="inline-block bg-blue-200 rounded-full py-2 text-l"
-              style={{
-                backgroundColor: "#64748B",
-                color: "#FFF",
-                paddingLeft: "24.5px",
-                paddingRight: "24.5px",
-                fontSize: "12px",
-              }}
-            >
-              {category}
-            </span>
-          </div>
+          <PostCategory
+            category={category}
+            className="w-[100px] h-[30px] custom-font-additional"
+          />
         </div>
       </div>
     </Card>

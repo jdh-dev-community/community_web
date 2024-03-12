@@ -19,11 +19,7 @@ export default async function handler(
     case "PUT":
       const currentPost = await updatePost(req);
 
-      if (currentPost.status === 200) {
-        res.status(200).json(await currentPost.json());
-      } else {
-        // res.status(500).json({ success: false });
-      }
+      res.status(currentPost.status).json(await currentPost.json());
 
       break;
     case "DELETE":
@@ -56,7 +52,7 @@ const removePost = async (postId: string, authorization: string) => {
 };
 
 const updatePost = async (req: NextApiRequest) => {
-  const { postId, ...body } = JSON.parse(req.body);
+  const { postId, creator, ...body } = JSON.parse(req.body);
 
   const response = await fetch(`http://3.36.204.107/api/v1/post/${postId}`, {
     method: "PUT",

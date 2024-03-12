@@ -1,10 +1,20 @@
+import { useToast } from "@/components/ui/use-toast";
+import { INACTIVE, invalidPassword } from "@/constants";
 import { BASE_COMMENT } from "@/types/api/commentApi";
 import { getParamsFromFormData } from "@/utils/common";
-import { Dispatch, FormEvent, SetStateAction, useRef, useState } from "react";
+import { findIndex, mapValues } from "lodash";
+import {
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 export const useCommentManager = (
   data: any,
-  setOpenCommentDialog: Dispatch<SetStateAction<boolean>>
+  setOpenDeletePopup: Dispatch<SetStateAction<boolean>>
 ) => {
   const [comments, setComments] = useState<{
     elementsCount: number;
@@ -14,12 +24,32 @@ export const useCommentManager = (
     [key: string]: { elementsCount: number; content: BASE_COMMENT[] };
   }>({});
 
+  const [openReCommentForm, setOpenReCommentForm] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  const [isVisibleReComment, setVisibleReComment] = useState<{
+    [key: string]: boolean;
+  }>({});
+
   const commentId = useRef<number | null>(null);
   const commentNumber = useRef<number>(1);
   const reCommentPage = useRef<{
     [key: string]: number;
   }>({});
   const pageSize = useRef<number>(10);
+
+  const { toast } = useToast();
+
+  useEffect(() => {
+    setComments(data.comments);
+    setReCommentList({});
+    setOpenReCommentForm({});
+    setVisibleReComment({});
+    commentId.current = null;
+    commentNumber.current = 1;
+    reCommentPage.current = {};
+  }, [data]);
 
   const getCommentList = async () => {
     commentNumber.current = commentNumber.current + 1;
@@ -44,7 +74,7 @@ export const useCommentManager = (
     });
   };
 
-  const handleCommentSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleCommentSubmit = async (e: any) => {
     e.preventDefault();
 
     const requestParams = getParamsFromFormData(new FormData(e.currentTarget));
@@ -71,9 +101,9 @@ export const useCommentManager = (
         commentNumber.current = 0;
         await getCommentList();
       }
-
-      setOpenCommentDialog(false);
     }
+
+    e.target.reset();
   };
 
   const setCommentId = (id: number | null) => {
@@ -108,12 +138,108 @@ export const useCommentManager = (
     });
   };
 
+  const handleReCommentForm = (commentId: number) => {
+    setOpenReCommentForm((prev) => {
+      if (prev[commentId]) {
+        return { ...prev, [commentId]: !prev[commentId] };
+      }
+
+      return { ...prev, [commentId]: true };
+    });
+  };
+
+  const handleVisibleReComment = (commentId: number) => {
+    setVisibleReComment((prev) => {
+      if (prev[commentId]) {
+        return { ...prev, [commentId]: !prev[commentId] };
+      }
+
+      return { ...prev, [commentId]: true };
+    });
+  };
+
+  const handleCommentRemove = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const params = getParamsFromFormData(new FormData(e.currentTarget));
+
+    const response = await fetch(
+      `/api/v1/post/${data.postId}/comment/${commentId.current}/token`,
+      {
+        method: "POST",
+        body: JSON.stringify({ password: params.password }),
+      }
+    );
+
+    if (response.status === 200) {
+      const { token } = await response.json();
+
+      const res = await fetch(
+        `/api/v1/post/${data.postId}/comment/${commentId.current}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const { success } = await res.json();
+      if (success) {
+        updateCommentList();
+        setOpenDeletePopup(false);
+      } else {
+        alert("삭제를 하지 못했습니다.");
+      }
+    } else {
+      alert(invalidPassword);
+    }
+
+    return;
+  };
+
+  const updateCommentList = () => {
+    const isComment =
+      findIndex(
+        comments.content,
+        (value) => value.commentId === commentId.current
+      ) > 0;
+
+    if (isComment) {
+      setComments((prev) => ({
+        ...prev,
+        content: prev.content.map((value) => {
+          if (value.commentId === commentId.current) {
+            return { ...value, status: INACTIVE };
+          }
+          return value;
+        }),
+      }));
+    } else {
+      setReCommentList((prev) => {
+        return mapValues(prev, (item) => ({
+          ...item,
+          content: item.content.map((value) => {
+            if (value.commentId === commentId.current) {
+              return { ...value, status: INACTIVE };
+            }
+            return value;
+          }),
+        }));
+      });
+    }
+  };
+
   return {
     comments,
     reCommentList,
+    openReCommentForm,
+    isVisibleReComment,
     setCommentId,
     handleCommentSubmit,
     getReComment,
     getCommentList,
+    handleVisibleReComment,
+    handleReCommentForm,
+    handleCommentRemove,
   };
 };

@@ -29,7 +29,7 @@ export default async function handler(
         },
       });
 
-      if (response.status === 204) {
+      if (response.status === 200) {
         res.status(response.status).json({ success: true });
       } else {
         res.status(response.status).json({ success: false });
