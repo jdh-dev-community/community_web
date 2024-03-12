@@ -1,0 +1,86 @@
+diff --git a/node_modules/suneditor/src/lib/core.d.ts b/node_modules/suneditor/src/lib/core.d.ts
+index 8c5fe9f..8986b81 100644
+--- a/node_modules/suneditor/src/lib/core.d.ts
++++ b/node_modules/suneditor/src/lib/core.d.ts
+@@ -1,11 +1,11 @@
+-import { History } from './history.d';
+-import { Plugin } from './../plugins/Plugin.d';
++import { Module } from '../plugins/Module';
++import _Notice from '../plugins/modules/_notice';
+ import { Lang } from './../lang/Lang.d';
+ import { SunEditorOptions } from './../options.d';
++import { Plugin } from './../plugins/Plugin.d';
+ import { Context } from './context';
++import { History } from './history.d';
+ import Util from './util';
+-import { Module } from '../plugins/Module';
+-import _Notice from '../plugins/modules/_notice';
+ 
+ type Controllers = Array<string | Function | Element>;
+ type fileInfo =  {
+@@ -606,7 +606,7 @@ interface Core {
+ 
+     /**
+      * @description Remove events from document.
+-     * When created as an Iframe, the event of the document inside the Iframe is also removed.
++     * When created as an Iframe, the event of the document inside the Iframe is also removed.
+      * @param type Event type
+      * @param listener Event listener
+      */
+diff --git a/node_modules/suneditor/src/lib/core.js b/node_modules/suneditor/src/lib/core.js
+index 0fb8b2e..a085530 100755
+--- a/node_modules/suneditor/src/lib/core.js
++++ b/node_modules/suneditor/src/lib/core.js
+@@ -1162,10 +1162,10 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
+          * @returns {Node}
+          */
+         getSelectionNode: function () {
+-            if (!context.element.wysiwyg.contains(this._variable._selectionNode)) this._editorRange();
++            if (!context.element.wysiwyg.contains(this._variable._selectionNode)) this._editorRange();
+             if (!this._variable._selectionNode) {
+                 const selectionNode = util.getChildElement(context.element.wysiwyg.firstChild, function (current) { return current.childNodes.length === 0 || current.nodeType === 3; }, false);
+-                if (!selectionNode) {
++                if (!selectionNode) {
+                     this._editorRange();
+                 } else {
+                     this._variable._selectionNode = selectionNode;
+@@ -5659,7 +5659,7 @@ export default function (context, pluginCallButtons, plugins, lang, options, _re
+ 
+         /**
+          * @description Remove events from document.
+-         * When created as an Iframe, the event of the document inside the Iframe is also removed.
++         * When created as an Iframe, the event of the document inside the Iframe is also removed.
+          * @param {String} type Event type
+          * @param {Function} listener Event listener
+          */
+diff --git a/node_modules/suneditor/src/lib/util.js b/node_modules/suneditor/src/lib/util.js
+index 48c4ede..6398bd1 100755
+--- a/node_modules/suneditor/src/lib/util.js
++++ b/node_modules/suneditor/src/lib/util.js
+@@ -38,7 +38,7 @@ const util = {
+      * @private
+      */
+     _HTMLConvertor: function (contents) {
+-        const ec = {'&': '&amp;', '\u00A0': '&nbsp;', '\'': '&apos;', '"': '&quot;', '<': '&lt;', '>': '&gt;'};
++        const ec = {'&': '&amp;', '\u00A0': '&nbsp;', '\'': '&apos;', '"': '&quot;', '<': '&lt;', '>': '&gt;'};
+         return contents.replace(/&|\u00A0|'|"|<|>/g, function (m) {
+             return (typeof ec[m] === 'string') ? ec[m] : m;
+         });
+@@ -170,7 +170,7 @@ const util = {
+      * @returns {String}
+      */
+     HTMLEncoder: function (contents) {
+-        const ec = {'<': '$lt;', '>': '$gt;'};
++        const ec = {'<': '$lt;', '>': '$gt;'};
+         return contents.replace(/<|>/g, function (m) {
+             return (typeof ec[m] === 'string') ? ec[m] : m;
+         });
+@@ -184,7 +184,7 @@ const util = {
+      * @returns {String}
+      */
+     HTMLDecoder: function (contents) {
+-        const ec = {'$lt;': '<', '$gt;': '>'};
++        const ec = {'$lt;': '<', '$gt;': '>'};
+         return contents.replace(/\$lt;|\$gt;/g, function (m) {
+             return (typeof ec[m] === 'string') ? ec[m] : m;
+         });

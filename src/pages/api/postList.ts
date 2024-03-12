@@ -1,21 +1,23 @@
+import { BASE_POST } from "@/types/api/postApi";
 import { NextApiRequest, NextApiResponse } from "next";
+
+export interface Board extends BASE_POST {
+  onClick?: (id: number) => void;
+}
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<any>
+  res: NextApiResponse<Board[]>
 ) {
-  const { page, size } = req.query;
+  const { page, size, sortBy } = req.query;
 
   try {
-    const apiUrl = `http://3.36.204.107/api/v1/post/?page=${page}&size=${size}`;
+    const apiUrl = `${process.env.NEXT_BASE_URI}/api/v1/post/?page=${page}&size=${size}&sortBy=${sortBy}`;
     const response = await fetch(apiUrl);
     const data = await response.json();
-    console.log("data :>> ", data);
 
     res.status(200).json(data);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Server error", error: JSON.stringify(error) });
+    console.log(error);
   }
 }
