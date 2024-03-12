@@ -4,11 +4,12 @@ import { Header } from "@/components/header";
 import { NEWEST } from "@/components/home/SortButton";
 import { PostDetailComponent } from "@/components/postDetail/PostDetail";
 import { isMobileScreenWithException } from "@/utils/responsive";
+import _ from "lodash";
 import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Board } from "./api/postList";
 import ClipLoader from "react-spinners/ClipLoader";
+import { Board } from "./api/postList";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -84,7 +85,7 @@ export default function Home() {
   };
 
   const fetchPostDetail = async (id: number) => {
-    if (id !== null) {
+    if (!_.isNil(id)) {
       const response = await fetch(`/api/post/${id}`);
       const data = await response.json();
 
