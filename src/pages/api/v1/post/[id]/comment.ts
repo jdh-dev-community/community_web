@@ -10,7 +10,7 @@ export default async function handler(
 ) {
   switch (req.method) {
     case "GET":
-      const comments = await fetch(`http://3.36.204.107${req.url}`, {
+      const comments = await fetch(`${process.env.NEXT_BASE_URI}${req.url}`, {
         method: req.method,
         headers: {
           "Content-Type": "application/json",
@@ -24,7 +24,7 @@ export default async function handler(
       break;
 
     case "POST":
-      const response = await fetch(`http://3.36.204.107${req.url}`, {
+      const response = await fetch(`${process.env.NEXT_BASE_URI}${req.url}`, {
         method: req.method,
         body: req.body,
         headers: {

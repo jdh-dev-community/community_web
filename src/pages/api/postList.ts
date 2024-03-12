@@ -12,7 +12,7 @@ export default async function handler(
   const { page, size, sortBy } = req.query;
 
   try {
-    const apiUrl = `http://3.36.204.107/api/v1/post/?page=${page}&size=${size}&sortBy=${sortBy}`;
+    const apiUrl = `${process.env.NEXT_BASE_URI}/api/v1/post/?page=${page}&size=${size}&sortBy=${sortBy}`;
     const response = await fetch(apiUrl);
     const data = await response.json();
 

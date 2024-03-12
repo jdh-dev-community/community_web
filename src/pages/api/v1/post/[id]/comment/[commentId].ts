@@ -10,18 +10,21 @@ export default async function handler(
 ) {
   switch (req.method) {
     case "GET":
-      const reCommentResponse = await fetch(`http://3.36.204.107${req.url}`, {
-        method: req.method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const reCommentResponse = await fetch(
+        `${process.env.NEXT_BASE_URI}${req.url}`,
+        {
+          method: req.method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       res.status(reCommentResponse.status).json(await reCommentResponse.json());
 
       break;
 
     case "DELETE":
-      const response = await fetch(`http://3.36.204.107${req.url}`, {
+      const response = await fetch(`${process.env.NEXT_BASE_URI}${req.url}`, {
         method: req.method,
         headers: {
           "Content-Type": "application/json",
