@@ -81,7 +81,7 @@ export const PostDetailComponent: FC<Props> = ({
       </div>
       <div className="mt-[15px] lg:mt-[20px]">
         <div
-          className={`h-[56px] lg:h-[86px] w-full flex items-center  line-clamp-2 ${
+          className={`min-h-[56px] lg:min-h-[86px]  w-full flex items-center  ${
             isMobile ? "custom-font-h4" : "custom-font-h2"
           }`}
         >
