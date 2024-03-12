@@ -14,7 +14,7 @@ export const Profile: FC<Props> = ({
   return (
     <div className="flex items-center">
       <div className={`bg-[#B667AE] rounded-[50%] mr-[5px] ${imageStyle}`} />
-      <div className={`custom-font-p  ${textStyle}`}>{nickname}</div>
+      <div className={` ${textStyle}`}>{nickname}</div>
     </div>
   );
 };

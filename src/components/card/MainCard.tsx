@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "../ui/card";
 import Image from "next/image";
-import { PostCategory } from "../catogory/PostCategory";
+import { PostCategory } from "../parts/PostCategory";
 
 export const MainCard = ({
   createdAt,
@@ -79,7 +79,7 @@ export const MainCard = ({
             {title}
           </h4>
         </div>
-        <div className=" text-gray-800 text-base mb-4 line-clamp-3">
+        <div className=" text-gray-800 text-base mb-4 line-clamp-3 max-h-[40px]">
           <div dangerouslySetInnerHTML={{ __html: content }} />
         </div>
       </div>

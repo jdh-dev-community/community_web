@@ -2,7 +2,7 @@ import { usePostManager } from "@/hooks/postDetail/usePostManage";
 import { PostDetail_Response } from "@/types/api/postApi";
 import { getTimeDifference } from "@/utils/dateUtils";
 import { FC, useState } from "react";
-import { PostCategory } from "../catogory/PostCategory";
+import { PostCategory } from "../parts/PostCategory";
 import { DeleteFormSheet } from "../form/DeleteFormSheet";
 import { UpdateFormSheet } from "../form/UpdateFormSheet";
 import { Profile } from "../profile/Profile";
@@ -36,12 +36,12 @@ export const PostDetailComponent: FC<Props> = ({
 
   return (
     <div className={className}>
-      <div className="flex justify-between relative ">
+      <div className="flex justify-between relative">
         <div className="flex items-center">
           <Profile
             nickname={creator}
             imageStyle="w-[40px] h-[40px] lg:w-[60px] lg:h-[60px]"
-            textStyle="custom-font-h2"
+            textStyle={isMobile ? "custom-font-p" : "custom-font-h4"}
           />
           <div
             className={`ml-[20px] text-slate-500 ${
@@ -56,7 +56,7 @@ export const PostDetailComponent: FC<Props> = ({
           <DropdownMenuTrigger asChild>
             <img
               src="/assets/images/vertical_showmore.png"
-              className="w-[36px] h-[36px] lg:w-[62px] lg:h-[62px] absolute right-[-15px]"
+              className="w-[36px] h-[36px] lg:w-[48px] lg:h-[48px] absolute right-[-18px] cursor-pointer "
             />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="">
@@ -81,7 +81,7 @@ export const PostDetailComponent: FC<Props> = ({
       </div>
       <div className="mt-[15px] lg:mt-[20px]">
         <div
-          className={`h-[56px] lg:h-[86px] w-full flex items-center  line-clamp-2 ${
+          className={`min-h-[56px] lg:min-h-[86px]  w-full flex items-center  ${
             isMobile ? "custom-font-h4" : "custom-font-h2"
           }`}
         >
