@@ -29,7 +29,7 @@ export const useSubmit = () => {
   const createPost = async (formData: FormData) => {
     const body = getJsonFromData(formData);
 
-    const res = await fetch("/api/post", {
+    const res = await fetch("/api/v1/post", {
       method: "POST",
       body: body,
     });

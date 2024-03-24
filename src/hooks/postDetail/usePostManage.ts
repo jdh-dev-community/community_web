@@ -23,7 +23,7 @@ export const usePostManager = (data: any) => {
 
     await hasAuth(params.password);
 
-    await fetch(`/api/post/${data.postId}`, {
+    await fetch(`/api/v1/post/${data.postId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token.current}`,
@@ -49,7 +49,7 @@ export const usePostManager = (data: any) => {
 
     const params = getParamsFromFormData(new FormData(e.currentTarget));
 
-    const res = await fetch(`/api/post/${data.postId}`, {
+    const res = await fetch(`/api/v1/post/${data.postId}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token.current}`,
@@ -75,7 +75,7 @@ export const usePostManager = (data: any) => {
   };
 
   const hasAuth = async (password: string) => {
-    const response = await fetch("/api/post/token", {
+    const response = await fetch("/api/v1/post/token", {
       method: "POST",
       body: JSON.stringify({
         postId: postContent.postId,
