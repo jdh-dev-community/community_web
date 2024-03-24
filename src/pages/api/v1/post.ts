@@ -13,10 +13,8 @@ export default async function handler(
 ) {
   switch (req.method) {
     case "GET":
-      const { page, size, sortBy } = req.query;
-
       try {
-        const apiUrl = `${process.env.NEXT_BASE_URI}/api/v1/post/?page=${page}&size=${size}&sortBy=${sortBy}`;
+        const apiUrl = `${process.env.NEXT_BASE_URI}${req.url}`;
         const response = await fetch(apiUrl);
         const data = await response.json();
 
@@ -27,7 +25,13 @@ export default async function handler(
       break;
 
     case "POST":
-      const response = await createPost(req.body);
+      const response = await fetch(`${process.env.NEXT_BASE_URI}${req.url}`, {
+        method: "POST",
+        body: req.body,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       if (response.status === 201) {
         res.status(200).json({ result: await response.json() });
@@ -41,15 +45,3 @@ export default async function handler(
       break;
   }
 }
-
-const createPost = async (body: any) => {
-  const response = await fetch(`${process.env.NEXT_BASE_URI}/api/v1/post`, {
-    method: "POST",
-    body: body,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  return response;
-};
