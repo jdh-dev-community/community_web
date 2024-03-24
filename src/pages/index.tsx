@@ -9,7 +9,7 @@ import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ClipLoader from "react-spinners/ClipLoader";
-import { Board } from "./api/postList";
+import { Board } from "./api/v1/post";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -56,7 +56,7 @@ export default function Home() {
     if (isLoading) return;
 
     const response = await fetch(
-      `/api/postList?page=${currentPage}&size=${PAGE_SIZE}&sortBy=${listSortType}`
+      `/api/v1/post?page=${currentPage}&size=${PAGE_SIZE}&sortBy=${listSortType}`
     );
 
     const newCards = await response.json();
@@ -86,7 +86,7 @@ export default function Home() {
 
   const fetchPostDetail = async (id: number) => {
     if (!_.isNil(id)) {
-      const response = await fetch(`/api/post/${id}`);
+      const response = await fetch(`/api/v1/post/${id}`);
       const data = await response.json();
 
       setDetailData(data);
